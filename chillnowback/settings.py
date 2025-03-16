@@ -224,7 +224,7 @@ STATICFILES_FINDERS = [
 ]
 
 # Configuration de WhiteNoise pour la gestion des fichiers statiques
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Configuration CinetPay
 CINETPAY = {
@@ -238,3 +238,8 @@ CINETPAY = {
 
 # Brevo (Sendinblue) Configuration
 BREVO_API_KEY = os.getenv('BREVO_API_KEY')
+
+# Modification de la configuration WhiteNoise
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_AUTOREFRESH = True

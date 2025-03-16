@@ -15254,3 +15254,14 @@ INFO 2025-02-25 10:28:31,998 autoreload 25516 25404 Watching for file changes wi
 INFO 2025-02-25 10:39:51,034 autoreload 25516 25404 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\api\urls.py changed, reloading.
 INFO 2025-02-25 10:39:51,805 autoreload 42200 60624 Watching for file changes with StatReloader
 INFO 2025-03-16 11:18:10,973 autoreload 26820 24220 Watching for file changes with StatReloader
+INFO 2025-03-16 11:59:32,618 basehttp 26820 10440 "GET / HTTP/1.1" 302 0
+INFO 2025-03-16 11:59:32,618 basehttp 26820 10440 "GET /dashboard/ HTTP/1.1" 302 0
+INFO 2025-03-16 11:59:32,638 basehttp 26820 10440 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3778
+INFO 2025-03-16 11:59:32,817 basehttp 26820 10440 "GET /static/css/dashboard.css HTTP/1.1" 200 17121
+INFO 2025-03-16 11:59:32,841 basehttp 26820 5524 "GET /static/images/Chillnow%20logo%201.png HTTP/1.1" 200 12694
+INFO 2025-03-16 11:59:39,267 basehttp 26820 5524 "POST /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3927
+INFO 2025-03-16 11:59:49,548 basehttp 26820 5524 "POST /dashboard/login/?next=/dashboard/ HTTP/1.1" 302 0
+INFO 2025-03-16 11:59:53,229 basehttp 26820 5524 "GET /dashboard/ HTTP/1.1" 200 8918
+INFO 2025-03-16 12:00:00,182 basehttp 26820 5524 "GET /dashboard/users/ HTTP/1.1" 200 18708
+INFO 2025-03-16 12:05:08,352 autoreload 26820 24220 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-16 12:05:13,465 autoreload 25368 20084 Watching for file changes with StatReloader
