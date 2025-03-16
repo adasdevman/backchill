@@ -1,0 +1,109 @@
+[
+    {
+        "model": "core.categorie",
+        "pk": 1,
+        "fields": {
+            "nom": "CHILL",
+            "description": "Endroits pour se détendre",
+            "ordre": 1
+        }
+    },
+    {
+        "model": "core.categorie",
+        "pk": 2,
+        "fields": {
+            "nom": "PLACE TO BE",
+            "description": "Lieux à découvrir",
+            "ordre": 2
+        }
+    },
+    {
+        "model": "core.categorie",
+        "pk": 3,
+        "fields": {
+            "nom": "EVENT",
+            "description": "Événements à ne pas manquer",
+            "ordre": 3
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 1,
+        "fields": {
+            "categorie": 1,
+            "nom": "ROOFTOP",
+            "description": "Bars et restaurants en hauteur",
+            "ordre": 1
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 2,
+        "fields": {
+            "categorie": 1,
+            "nom": "PUB",
+            "description": "Bars et pubs",
+            "ordre": 2
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 3,
+        "fields": {
+            "categorie": 1,
+            "nom": "NIGHT CLUB",
+            "description": "Boîtes de nuit",
+            "ordre": 3
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 4,
+        "fields": {
+            "categorie": 2,
+            "nom": "EXCURSION",
+            "description": "Sorties et excursions",
+            "ordre": 1
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 5,
+        "fields": {
+            "categorie": 2,
+            "nom": "DECOUVERTE",
+            "description": "Lieux à découvrir",
+            "ordre": 2
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 6,
+        "fields": {
+            "categorie": 3,
+            "nom": "CONCERT",
+            "description": "Concerts et spectacles",
+            "ordre": 1
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 7,
+        "fields": {
+            "categorie": 3,
+            "nom": "BRUNCH",
+            "description": "Brunchs et petits déjeuners",
+            "ordre": 2
+        }
+    },
+    {
+        "model": "core.souscategorie",
+        "pk": 8,
+        "fields": {
+            "categorie": 3,
+            "nom": "SOIREE",
+            "description": "Soirées et événements",
+            "ordre": 3
+        }
+    }
+] 

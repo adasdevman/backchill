@@ -1,0 +1,371 @@
+[
+    {
+        "model": "core.annonce",
+        "pk": 1,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Sky Lounge Abidjan",
+            "description": "Profitez d'une vue imprenable sur la ville dans notre rooftop luxueux. Cocktails signature et cuisine internationale.",
+            "categorie": 1,
+            "sous_categorie": 1,
+            "localisation": "Cocody, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 2,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Sunset Rooftop",
+            "description": "Le meilleur endroit pour admirer le coucher du soleil sur la lagune. Ambiance lounge et tapas.",
+            "categorie": 1,
+            "sous_categorie": 1,
+            "localisation": "Plateau, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 3,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Cloud 9 Rooftop Bar",
+            "description": "Bar-restaurant panoramique avec DJ les weekends. Vue à 360° sur Abidjan.",
+            "categorie": 1,
+            "sous_categorie": 1,
+            "localisation": "Marcory, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 4,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Irish Pub Abidjan",
+            "description": "Authentique pub irlandais avec large sélection de bières et ambiance conviviale.",
+            "categorie": 1,
+            "sous_categorie": 2,
+            "localisation": "Zone 4, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 5,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Le Comptoir",
+            "description": "Pub moderne avec écrans géants pour les événements sportifs. Happy hour tous les jours.",
+            "categorie": 1,
+            "sous_categorie": 2,
+            "localisation": "Plateau, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 6,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "The Beer Garden",
+            "description": "Grand jardin avec plus de 50 bières différentes. Ambiance décontractée et grillades.",
+            "categorie": 1,
+            "sous_categorie": 2,
+            "localisation": "Cocody, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 7,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Le Life Star",
+            "description": "La plus grande boîte de nuit d'Abidjan. DJ internationaux et shows exclusifs.",
+            "categorie": 1,
+            "sous_categorie": 3,
+            "localisation": "Zone 4, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 8,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Club Vegas",
+            "description": "Ambiance Las Vegas au cœur d'Abidjan. Tables VIP et spectacles.",
+            "categorie": 1,
+            "sous_categorie": 3,
+            "localisation": "Plateau, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 9,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Le Duplex",
+            "description": "Club sur deux étages avec différentes ambiances musicales. Terrasse fumeurs.",
+            "categorie": 1,
+            "sous_categorie": 3,
+            "localisation": "Marcory, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 10,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Safari Parc Banco",
+            "description": "Découverte de la faune et flore du Parc National du Banco. Guide expérimenté.",
+            "categorie": 2,
+            "sous_categorie": 4,
+            "localisation": "Parc du Banco, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 11,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Îles Éhotilé Tour",
+            "description": "Excursion en bateau vers les îles Éhotilé. Baignade et pique-nique inclus.",
+            "categorie": 2,
+            "sous_categorie": 4,
+            "localisation": "Adiaké",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 12,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Cascade de Man",
+            "description": "Randonnée guidée vers les magnifiques cascades de Man. Transport inclus.",
+            "categorie": 2,
+            "sous_categorie": 4,
+            "localisation": "Man",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 13,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Basilique Notre-Dame",
+            "description": "Visite guidée de la majestueuse Basilique Notre-Dame de la Paix. Architecture unique.",
+            "categorie": 2,
+            "sous_categorie": 5,
+            "localisation": "Yamoussoukro",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 14,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Village artisanal",
+            "description": "Découverte de l'artisanat local. Démonstrations et ateliers disponibles.",
+            "categorie": 2,
+            "sous_categorie": 5,
+            "localisation": "Cocody, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 15,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Musée des Civilisations",
+            "description": "Exposition permanente sur l'histoire et la culture ivoirienne.",
+            "categorie": 2,
+            "sous_categorie": 5,
+            "localisation": "Plateau, Abidjan",
+            "est_actif": true,
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 16,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Magic System en Concert",
+            "description": "Le groupe légendaire Magic System en concert exclusif. Guest stars.",
+            "categorie": 3,
+            "sous_categorie": 6,
+            "localisation": "Palais de la Culture, Treichville",
+            "est_actif": true,
+            "date_evenement": "2024-02-15 20:00:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 17,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Festival Reggae",
+            "description": "Grand festival reggae avec artistes nationaux et internationaux.",
+            "categorie": 3,
+            "sous_categorie": 6,
+            "localisation": "Stade FHB, Abidjan",
+            "est_actif": true,
+            "date_evenement": "2024-03-01 18:00:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 18,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Concert Classique",
+            "description": "Orchestre symphonique d'Abidjan. Programme: Mozart et Beethoven.",
+            "categorie": 3,
+            "sous_categorie": 6,
+            "localisation": "Sofitel Abidjan",
+            "est_actif": true,
+            "date_evenement": "2024-02-28 19:30:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 19,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Brunch & Jazz",
+            "description": "Brunch gourmet accompagné de jazz live. Buffet international.",
+            "categorie": 3,
+            "sous_categorie": 7,
+            "localisation": "Pullman Abidjan",
+            "est_actif": true,
+            "date_evenement": "2024-02-18 11:00:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 20,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Brunch Healthy",
+            "description": "Brunch healthy et détox. Produits bio et locaux.",
+            "categorie": 3,
+            "sous_categorie": 7,
+            "localisation": "Green House, Cocody",
+            "est_actif": true,
+            "date_evenement": "2024-02-25 10:30:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 21,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Brunch Africain",
+            "description": "Découverte des saveurs africaines dans un cadre traditionnel.",
+            "categorie": 3,
+            "sous_categorie": 7,
+            "localisation": "Maquis du Vallon, Cocody",
+            "est_actif": true,
+            "date_evenement": "2024-03-03 11:30:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 22,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Nouvel An Chinois",
+            "description": "Grande célébration du Nouvel An Chinois. Spectacles et buffet asiatique.",
+            "categorie": 3,
+            "sous_categorie": 8,
+            "localisation": "Hôtel Tiama, Plateau",
+            "est_actif": true,
+            "date_evenement": "2024-02-10 19:00:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 23,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Soirée Salsa",
+            "description": "Soirée dansante salsa avec cours d'initiation et shows.",
+            "categorie": 3,
+            "sous_categorie": 8,
+            "localisation": "La Dolce Vita, Zone 4",
+            "est_actif": true,
+            "date_evenement": "2024-02-23 20:00:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    },
+    {
+        "model": "core.annonce",
+        "pk": 24,
+        "fields": {
+            "utilisateur": 2,
+            "titre": "Gala de Charité",
+            "description": "Dîner de gala au profit des enfants défavorisés. Tenue de soirée exigée.",
+            "categorie": 3,
+            "sous_categorie": 8,
+            "localisation": "Sofitel Abidjan",
+            "est_actif": true,
+            "date_evenement": "2024-03-15 19:30:00",
+            "created": "2024-01-26T00:00:00Z",
+            "modified": "2024-01-26T00:00:00Z"
+        }
+    }
+] 

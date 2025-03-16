@@ -1,0 +1,107 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Détails utilisateur - Dashboard{% endblock %}
+
+{% block content %}
+<div class="data-table-container">
+    <div class="data-table-header">
+        <h2 class="data-title">
+            <i class="fas fa-user"></i> 
+            Détails de l'utilisateur
+        </h2>
+        <div class="header-actions">
+            <a href="{% url 'dashboard:user_edit' user.id %}" class="action-btn edit-btn">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <a href="{% url 'dashboard:user_delete' user.id %}" class="action-btn delete-btn">
+                <i class="fas fa-trash"></i> Supprimer
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-content">
+        <!-- Informations principales -->
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                Informations personnelles
+            </h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Nom d'utilisateur</div>
+                    <div class="detail-value">{{ user.username }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Prénom</div>
+                    <div class="detail-value">{{ user.first_name|default:"-" }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Nom</div>
+                    <div class="detail-value">{{ user.last_name|default:"-" }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value">{{ user.email }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Rôle</div>
+                    <div class="detail-value">{{ user.role }}</div>
+                </div>
+                {% if user.role == 'ANNONCEUR' %}
+                <div class="detail-item">
+                    <div class="detail-label">Nom de l'entreprise</div>
+                    <div class="detail-value">{{ user.company_name|default:"-" }}</div>
+                </div>
+                {% endif %}
+                <div class="detail-item">
+                    <div class="detail-label">Téléphone</div>
+                    <div class="detail-value">{{ user.phone_number }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date d'inscription</div>
+                    <div class="detail-value">{{ user.date_joined|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+
+        {% if user.billing_info %}
+        <div class="section-title mt-4">
+            <i class="fas fa-file-invoice"></i>
+            <h2>Informations de facturation</h2>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Prénom</label>
+                <span>{{ user.billing_info.first_name|default:"Non renseigné" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Nom</label>
+                <span>{{ user.billing_info.last_name|default:"Non renseigné" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Email</label>
+                <span>{{ user.billing_info.email|default:"Non renseigné" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Téléphone</label>
+                <span>{{ user.billing_info.phone|default:"Non renseigné" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Adresse</label>
+                <span>{{ user.billing_info.address|default:"Non renseignée" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Ville</label>
+                <span>{{ user.billing_info.city|default:"Non renseignée" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Dernière mise à jour</label>
+                <span>{{ user.billing_info.updated_at|date:"d/m/Y H:i" }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

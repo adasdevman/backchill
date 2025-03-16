@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @media (max-width: 991.98px) {
+            .desktop-menu {
+                display: none;
+            }
+        }
+        @media (min-width: 992px) {
+            .mobile-menu-button {
+                display: none;
+            }
+            .desktop-menu {
+                display: flex;
+                align-items: center;
+                flex: 1;
+                margin-left: 2rem;
+            }
+            .main-nav {
+                flex: 1;
+            }
+            .desktop-menu .navbar-nav {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+        /* Navbar styles */
+        .navbar {
+            padding: 0.5rem 1rem;
+            min-height: 70px;
+            background-color: #212529 !important;
+            width: 100%;
+        }
+        .navbar .container-fluid {
+            height: 100%;
+            min-height: inherit;
+        }
+        .navbar-brand {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .desktop-menu {
+            height: 100%;
+        }
+        .navbar-nav {
+            height: 100%;
+        }
+        .offcanvas {
+            max-width: 300px;
+        }
+        .nav-link:hover {
+            color: #ffc107 !important;
+        }
+        .navbar-nav .nav-link {
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            white-space: nowrap;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .offcanvas .nav-link:hover {
+            color: #ffc107 !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard:home' %}">
+                <img src="{% static 'images/Chillnow logo 1.png' %}" alt="Chillnow">
+            </a>
+            
+            <button class="btn mobile-menu-button" type="button" data-bs-toggle="offcanvas" 
+                    data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="desktop-menu">
+                <ul class="navbar-nav main-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:users' %}">Utilisateurs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:annonces' %}">Annonces</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:payments' %}">Paiements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:statistiques' %}">Statistiques</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard:logout' %}">Déconnexion</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menu Mobile Off-Canvas -->
+    <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="mobileMenu" 
+         aria-labelledby="mobileMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" 
+                    aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link py-2" href="{% url 'dashboard:users' %}">Utilisateurs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-2" href="{% url 'dashboard:annonces' %}">Annonces</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-2" href="{% url 'dashboard:payments' %}">Paiements</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-2" href="{% url 'dashboard:statistiques' %}">Statistiques</a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a class="nav-link py-2" href="{% url 'dashboard:logout' %}">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

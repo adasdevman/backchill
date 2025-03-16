@@ -1,0 +1,30 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Supprimer une annonce - Dashboard{% endblock %}
+
+{% block content %}
+<div class="data-table-container">
+    <div class="data-table-header">
+        <h2 class="data-title">
+            <i class="fas fa-trash"></i> 
+            Confirmer la suppression
+        </h2>
+    </div>
+    
+    <div class="confirm-delete">
+        <p>Êtes-vous sûr de vouloir supprimer l'annonce "{{ annonce.titre }}" ?</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn-delete">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+                <a href="{% url 'dashboard:annonces' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

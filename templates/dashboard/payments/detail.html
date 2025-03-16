@@ -1,0 +1,96 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Détails du paiement - Dashboard{% endblock %}
+
+{% block content %}
+<div class="data-table-container">
+    <div class="data-table-header">
+        <h2 class="data-title">
+            <i class="fas fa-file-invoice"></i> 
+            Détails du paiement
+        </h2>
+        <div class="header-actions">
+            <a href="{% url 'dashboard:payment_edit' payment.id %}" class="action-btn edit-btn">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-content">
+        <div class="detail-section">
+            <h3 class="section-title">Informations du paiement</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">ID</div>
+                    <div class="detail-value">{{ payment.id }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Montant total</div>
+                    <div class="detail-value">{{ payment.tarif.prix|floatformat:0 }} FCFA</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Taux d'avance</div>
+                    <div class="detail-value">{{ payment.annonce.utilisateur.taux_avance }}%</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Montant d'avance</div>
+                    <div class="detail-value">{{ payment.amount|floatformat:0 }} FCFA</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Statut</div>
+                    <div class="detail-value">{{ payment.status }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Type</div>
+                    <div class="detail-value">{{ payment.payment_type }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Date de création</div>
+                    <div class="detail-value">{{ payment.created|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Informations de l'annonce</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Titre</div>
+                    <div class="detail-value">{{ payment.annonce.titre }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Annonceur</div>
+                    <div class="detail-value">{{ payment.annonce.utilisateur.email }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Formule</div>
+                    <div class="detail-value">{{ payment.tarif.nom }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Informations du client</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value">{{ payment.user.email }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Nom</div>
+                    <div class="detail-value">{{ payment.user.last_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Prénom</div>
+                    <div class="detail-value">{{ payment.user.first_name }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Téléphone</div>
+                    <div class="detail-value">{{ payment.user.phone_number|default:"Non renseigné" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

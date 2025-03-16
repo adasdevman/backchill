@@ -1,0 +1,33 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Connexion - Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center mb-4">
+        <img src="{% static 'images/Chillnow logo 1.png' %}" alt="Chillnow" style="max-width: 150px;">
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" class="login-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username" class="form-label">Email</label>
+                        <input type="text" name="username" id="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="login-btn">Se connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,84 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Statistiques - Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Statistiques des catégories -->
+    <div class="col-md-6">
+        <div class="data-table-container">
+            <div class="data-table-header">
+                <h2 class="data-title">
+                    <i class="fas fa-chart-pie"></i> 
+                    Statistiques par catégorie
+                </h2>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-tag"></i> Catégorie</th>
+                            <th><i class="fas fa-hashtag"></i> Total</th>
+                            <th><i class="fas fa-chart-bar"></i> Pourcentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in stats_categories %}
+                        <tr class="data-row">
+                            <td><span class="category-badge">{{ stat.categorie__nom }}</span></td>
+                            <td>{{ stat.total }}</td>
+                            <td>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: {{ stat.total }}%">
+                                        {{ stat.total }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques des paiements -->
+    <div class="col-md-6">
+        <div class="data-table-container">
+            <div class="data-table-header">
+                <h2 class="data-title">
+                    <i class="fas fa-money-bill-wave"></i> 
+                    Statistiques des paiements
+                </h2>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-info-circle"></i> Statut</th>
+                            <th><i class="fas fa-hashtag"></i> Total</th>
+                            <th><i class="fas fa-chart-bar"></i> Pourcentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in stats_payments %}
+                        <tr class="data-row">
+                            <td><span class="status-badge status-{{ stat.status }}">{{ stat.status }}</span></td>
+                            <td>{{ stat.total }}</td>
+                            <td>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: {{ stat.total }}%">
+                                        {{ stat.total }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

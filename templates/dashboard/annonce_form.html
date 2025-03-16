@@ -1,0 +1,396 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} une annonce - Dashboard{% endblock %}
+
+{% block content %}
+<div class="data-table-container">
+    <div class="data-table-header">
+        <h2 class="data-title">
+            <i class="fas fa-bullhorn"></i> 
+            {{ action }} une annonce
+        </h2>
+    </div>
+    
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <form method="post" class="custom-form" enctype="multipart/form-data" id="annonceForm">
+        {% csrf_token %}
+        
+        <div class="row">
+            <!-- Colonne gauche -->
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label class="form-label">Titre</label>
+                    <input type="text" name="titre" class="form-control" value="{{ annonce.titre }}" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Catégorie</label>
+                    <select name="categorie" id="categorie" class="form-control" required>
+                        <option value="">Sélectionnez une catégorie</option>
+                        {% for categorie in categories %}
+                        <option value="{{ categorie.nom }}" {% if annonce.categorie == categorie %}selected{% endif %}>{{ categorie.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="form-label">Sous-catégorie</label>
+                    <select name="sous_categorie" id="sous_categorie" class="form-control" required>
+                        <option value="">Sélectionnez d'abord une catégorie</option>
+                    </select>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="4" required>{{ annonce.description }}</textarea>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="form-label">Localisation</label>
+                    <textarea name="localisation" class="form-control" rows="2" required>{{ annonce.localisation }}</textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Statut</label>
+                    <select name="status" class="form-control">
+                        <option value="PENDING" {% if annonce.status == 'PENDING' %}selected{% endif %}>En attente</option>
+                        <option value="ACTIVE" {% if annonce.status == 'ACTIVE' %}selected{% endif %}>Active</option>
+                        <option value="INACTIVE" {% if annonce.status == 'INACTIVE' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+
+                <!-- Champs date et heure pour les événements -->
+                <div id="event-fields" style="display: none;">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Date de l'événement</label>
+                        <input type="date" name="event_date" class="form-control" 
+                               value="{% if annonce.date_evenement %}{{ annonce.date_evenement|date:'Y-m-d' }}{% endif %}">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Heure de l'événement</label>
+                        <input type="time" name="event_time" class="form-control" 
+                               value="{% if annonce.date_evenement %}{{ annonce.date_evenement|time:'H:i' }}{% endif %}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne droite -->
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label class="form-label">Galerie Photos</label>
+                    <input type="file" name="galerie_photo" class="form-control" multiple accept="image/*">
+                    {% if annonce and annonce.photos.all %}
+                    <div class="mt-2">
+                        <p>Photos actuelles :</p>
+                        <div class="current-photos">
+                            {% for photo in annonce.photos.all %}
+                            <div class="photo-item">
+                                <img src="{{ photo.image.url }}" alt="Photo" class="thumbnail" style="max-width: 200px; height: auto;">
+                                <div class="mt-2">
+                                    <input type="checkbox" name="delete_photos" value="{{ photo.id }}" id="delete_photo_{{ photo.id }}">
+                                    <label for="delete_photo_{{ photo.id }}">Supprimer cette photo</label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="form-label">Galerie Vidéos (optionnel)</label>
+                    <input type="file" name="galerie_video" class="form-control" multiple accept="video/*">
+                    {% if annonce and annonce.galerie_video.all %}
+                    <div class="mt-2">
+                        <p>Vidéos actuelles :</p>
+                        <div class="current-videos">
+                            {% for video in annonce.galerie_video.all %}
+                            <div class="video-item">
+                                <video width="200" controls>
+                                    <source src="{{ video.video.url }}" type="video/mp4">
+                                    Votre navigateur ne supporte pas la lecture de vidéos.
+                                </video>
+                                <input type="checkbox" name="delete_videos" value="{{ video.id }}">
+                                <label>Supprimer</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label class="form-label">Tarifs</label>
+                    <div id="tarifs-container">
+                        {% for tarif in annonce.tarifs.all %}
+                        <div class="tarif-item mb-2">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="text" name="nom_tarif[]" class="form-control" value="{{ tarif.nom }}" placeholder="Nom du tarif">
+                                </div>
+                                <div class="col">
+                                    <input type="number" name="prix_tarif[]" class="form-control" value="{{ tarif.prix }}" placeholder="Prix">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn-delete remove-tarif">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn-add mt-2" id="add-tarif">
+                        <i class="fas fa-plus"></i> Ajouter un tarif
+                    </button>
+                </div>
+                
+                <!-- Section horaires (masquée pour Chill) -->
+                <div id="horaires-section" class="form-group mb-3">
+                    <label class="form-label">Horaires</label>
+                    <div id="horaires-container">
+                        {% for horaire in annonce.horaire_set.all %}
+                        <div class="horaire-item mb-2">
+                            <div class="row">
+                                <div class="col">
+                                    <select name="jour[]" class="form-control">
+                                        <option value="Lundi" {% if horaire.jour == 'Lundi' %}selected{% endif %}>Lundi</option>
+                                        <option value="Mardi" {% if horaire.jour == 'Mardi' %}selected{% endif %}>Mardi</option>
+                                        <option value="Mercredi" {% if horaire.jour == 'Mercredi' %}selected{% endif %}>Mercredi</option>
+                                        <option value="Jeudi" {% if horaire.jour == 'Jeudi' %}selected{% endif %}>Jeudi</option>
+                                        <option value="Vendredi" {% if horaire.jour == 'Vendredi' %}selected{% endif %}>Vendredi</option>
+                                        <option value="Samedi" {% if horaire.jour == 'Samedi' %}selected{% endif %}>Samedi</option>
+                                        <option value="Dimanche" {% if horaire.jour == 'Dimanche' %}selected{% endif %}>Dimanche</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <input type="time" name="heure_ouverture[]" class="form-control" value="{{ horaire.heure_ouverture|time:'H:i' }}">
+                                </div>
+                                <div class="col">
+                                    <input type="time" name="heure_fermeture[]" class="form-control" value="{{ horaire.heure_fermeture|time:'H:i' }}">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn-delete remove-horaire">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <!-- Ajouter un horaire par défaut si aucun n'existe -->
+                        <div class="horaire-item mb-2">
+                            <div class="row">
+                                <div class="col">
+                                    <select name="jour[]" class="form-control">
+                                        <option value="Lundi">Lundi</option>
+                                        <option value="Mardi">Mardi</option>
+                                        <option value="Mercredi">Mercredi</option>
+                                        <option value="Jeudi">Jeudi</option>
+                                        <option value="Vendredi">Vendredi</option>
+                                        <option value="Samedi">Samedi</option>
+                                        <option value="Dimanche">Dimanche</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <input type="time" name="heure_ouverture[]" class="form-control">
+                                </div>
+                                <div class="col">
+                                    <input type="time" name="heure_fermeture[]" class="form-control">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" class="btn-delete remove-horaire">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn-add mt-2" id="add-horaire">
+                        <i class="fas fa-plus"></i> Ajouter un horaire
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="form-btn btn-create">
+                {% if annonce %}Modifier{% else %}Créer{% endif %}
+            </button>
+            <a href="{% url 'dashboard:annonces' %}" class="form-btn btn-cancel">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuration des sous-catégories par catégorie
+    const sousCategories = {
+        'CHILL': ['ROOFTOP', 'PUB', 'NIGHT CLUB'],
+        'PLACE TO BE': ['EXCURSION', 'DECOUVERTE'],
+        'EVENT': ['CONCERT', 'BRUNCH', 'SOIREE']
+    };
+    
+    // Mise à jour des sous-catégories
+    const categorieSelect = document.getElementById('categorie');
+    const sousCategorieSelect = document.getElementById('sous_categorie');
+    
+    function updateSousCategories(categorie) {
+        sousCategorieSelect.innerHTML = '<option value="">Sélectionnez une sous-catégorie</option>';
+        
+        if (categorie && sousCategories[categorie]) {
+            sousCategories[categorie].forEach(function(sousCategorie) {
+                const option = document.createElement('option');
+                option.value = sousCategorie;
+                option.textContent = sousCategorie;
+                {% if annonce %}
+                if (sousCategorie === '{{ annonce.sous_categorie.nom }}') {
+                    option.selected = true;
+                }
+                {% endif %}
+                sousCategorieSelect.appendChild(option);
+            });
+        }
+        
+        // Gestion de l'affichage des champs selon la catégorie
+        const horairesSection = document.getElementById('horaires-section');
+        const eventFields = document.getElementById('event-fields');
+
+        if (categorie === 'EVENT') {
+            horairesSection.style.display = 'none';
+            eventFields.style.display = 'block';
+        } else {
+            horairesSection.style.display = 'block';
+            eventFields.style.display = 'none';
+        }
+    }
+    
+    categorieSelect.addEventListener('change', function() {
+        updateSousCategories(this.value);
+    });
+    
+    // Initialiser les sous-catégories au chargement si une catégorie est sélectionnée
+    if (categorieSelect.value) {
+        updateSousCategories(categorieSelect.value);
+    }
+    
+    // Gestion des tarifs
+    const tarifsContainer = document.getElementById('tarifs-container');
+    const addTarifBtn = document.getElementById('add-tarif');
+    
+    addTarifBtn.addEventListener('click', function() {
+        const tarifItem = document.createElement('div');
+        tarifItem.className = 'tarif-item mb-2';
+        tarifItem.innerHTML = `
+            <div class="row">
+                <div class="col">
+                    <input type="text" name="nom_tarif[]" class="form-control" placeholder="Nom du tarif">
+                </div>
+                <div class="col">
+                    <input type="number" name="prix_tarif[]" class="form-control" placeholder="Prix">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn-delete remove-tarif">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        tarifsContainer.appendChild(tarifItem);
+    });
+    
+    // Suppression des tarifs
+    tarifsContainer.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-tarif')) {
+            e.target.closest('.tarif-item').remove();
+        }
+    });
+    
+    // Gestion des horaires
+    const horairesContainer = document.getElementById('horaires-container');
+    const addHoraireBtn = document.getElementById('add-horaire');
+    
+    addHoraireBtn.addEventListener('click', function() {
+        const horaireItem = document.createElement('div');
+        horaireItem.className = 'horaire-item mb-2';
+        horaireItem.innerHTML = `
+            <div class="row">
+                <div class="col">
+                    <select name="jour[]" class="form-control">
+                        <option value="Lundi">Lundi</option>
+                        <option value="Mardi">Mardi</option>
+                        <option value="Mercredi">Mercredi</option>
+                        <option value="Jeudi">Jeudi</option>
+                        <option value="Vendredi">Vendredi</option>
+                        <option value="Samedi">Samedi</option>
+                        <option value="Dimanche">Dimanche</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="time" name="heure_ouverture[]" class="form-control">
+                </div>
+                <div class="col">
+                    <input type="time" name="heure_fermeture[]" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn-delete remove-horaire">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        horairesContainer.appendChild(horaireItem);
+    });
+    
+    horairesContainer.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-horaire')) {
+            e.target.closest('.horaire-item').remove();
+        }
+    });
+});
+
+document.getElementById('annonceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const categorie = document.getElementById('categorie').value;
+    const horairesSection = document.getElementById('horaires-section');
+    
+    // Si ce n'est pas un événement et que les horaires sont visibles
+    if (categorie !== 'EVENT' && horairesSection.style.display !== 'none') {
+        const heuresOuverture = document.getElementsByName('heure_ouverture[]');
+        const heuresFermeture = document.getElementsByName('heure_fermeture[]');
+        const jours = document.getElementsByName('jour[]');
+        
+        // Vérifier qu'il y a au moins un horaire complet
+        let hasValidHoraire = false;
+        for (let i = 0; i < heuresOuverture.length; i++) {
+            if (jours[i].value && heuresOuverture[i].value && heuresFermeture[i].value) {
+                hasValidHoraire = true;
+                break;
+            }
+        }
+        
+        if (!hasValidHoraire) {
+            alert('Veuillez ajouter au moins un horaire complet');
+            return;
+        }
+    }
+    
+    // Afficher les données du formulaire
+    const formData = new FormData(this);
+    console.log('Données du formulaire:');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+    
+    // Continuer la soumission
+    this.submit();
+});
+</script>
+{% endblock %} 

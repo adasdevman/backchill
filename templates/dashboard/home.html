@@ -1,0 +1,135 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">{{ total_users }}</div>
+            <div class="stat-label">Utilisateurs</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-bullhorn"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">{{ total_annonces }}</div>
+            <div class="stat-label">Annonces</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">{{ total_payments }}</div>
+            <div class="stat-label">Paiements</div>
+        </div>
+    </div>
+</div>
+
+<div class="charts-grid">
+    <div class="chart-card">
+        <h3 class="chart-title">
+            <i class="fas fa-chart-pie"></i>
+            Répartition des annonces par catégorie
+        </h3>
+        <canvas id="categoriesChart"></canvas>
+    </div>
+    
+    <div class="chart-card">
+        <h3 class="chart-title">
+            <i class="fas fa-chart-bar"></i>
+            État des paiements
+        </h3>
+        <canvas id="paymentsChart"></canvas>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Graphique des catégories
+    const ctxCategories = document.getElementById('categoriesChart').getContext('2d');
+    new Chart(ctxCategories, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for stat in stats_categories %}'{{ stat.categorie }}',{% endfor %}],
+            datasets: [{
+                data: [{% for stat in stats_categories %}{{ stat.total }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 215, 0, 0.8)',
+                    'rgba(255, 159, 64, 0.8)',
+                    'rgba(255, 99, 132, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#ffffff'
+                    }
+                }
+            }
+        }
+    });
+
+    // Graphique des paiements
+    const ctxPayments = document.getElementById('paymentsChart').getContext('2d');
+    new Chart(ctxPayments, {
+        type: 'bar',
+        data: {
+            labels: [{% for stat in stats_payments %}'{{ stat.status }}',{% endfor %}],
+            datasets: [{
+                label: 'Nombre de paiements',
+                data: [{% for stat in stats_payments %}{{ stat.total }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 215, 0, 0.8)',
+                    'rgba(40, 167, 69, 0.8)',
+                    'rgba(220, 53, 69, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#ffffff'
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

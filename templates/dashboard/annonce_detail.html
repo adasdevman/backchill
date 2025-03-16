@@ -1,0 +1,154 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Détails annonce - Dashboard{% endblock %}
+
+{% block content %}
+<style>
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+
+<div class="data-table-container">
+    <div class="data-table-header">
+        <h2 class="data-title">
+            <i class="fas fa-bullhorn"></i> 
+            Détails de l'annonce
+        </h2>
+        <div class="header-actions">
+            <a href="{% url 'dashboard:annonce_edit' annonce.id %}" class="action-btn edit-btn">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <a href="{% url 'dashboard:annonce_delete' annonce.id %}" class="action-btn delete-btn">
+                <i class="fas fa-trash"></i> Supprimer
+            </a>
+        </div>
+    </div>
+
+    <div class="detail-content">
+        <!-- Informations principales -->
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                Informations principales
+            </h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Titre</div>
+                    <div class="detail-value">{{ annonce.titre }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Catégorie</div>
+                    <div class="detail-value">{{ annonce.categorie }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Sous-catégorie</div>
+                    <div class="detail-value">{{ annonce.sous_categorie }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Localisation</div>
+                    <div class="detail-value">{{ annonce.localisation }}</div>
+                </div>
+                {% if annonce.categorie.nom == 'EVENT' %}
+                <div class="detail-item">
+                    <div class="detail-label">Date et heure de l'événement</div>
+                    <div class="detail-value">{{ annonce.date_evenement|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-align-left"></i>
+                Description
+            </h3>
+            <div class="detail-text">
+                {{ annonce.description }}
+            </div>
+        </div>
+
+        <!-- Horaires (si ce n'est pas un événement) -->
+        {% if annonce.categorie.nom != 'EVENT' %}
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-clock"></i>
+                Horaires d'ouverture
+            </h3>
+            <div class="horaires-grid">
+                {% for horaire in annonce.horaire_set.all %}
+                <div class="horaire-item">
+                    <div class="jour">{{ horaire.jour }}</div>
+                    <div class="heures">{{ horaire.heure_ouverture|time:"H:i" }} - {{ horaire.heure_fermeture|time:"H:i" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tarifs -->
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-tag"></i>
+                Tarifs
+            </h3>
+            <div class="tarifs-grid">
+                {% for tarif in annonce.tarifs.all %}
+                <div class="tarif-item">
+                    <span class="tarif-nom">{{ tarif.nom }}</span>
+                    <span class="tarif-prix">{{ tarif.prix|floatformat:0 }} FCFA</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Galerie Photos -->
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-images"></i>
+                Galerie Photos
+            </h3>
+            <div class="photos-grid">
+                {% for photo in annonce.photos.all %}
+                <div class="photo-item">
+                    <img src="{{ photo.image.url }}" alt="Photo de l'annonce">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Galerie Vidéos -->
+        {% if annonce.galerie_video.all %}
+        <div class="detail-section">
+            <h3 class="section-title">
+                <i class="fas fa-video"></i>
+                Galerie Vidéos
+            </h3>
+            <div class="gallery-grid">
+                {% for video in annonce.galerie_video.all %}
+                <div class="gallery-item">
+                    <video controls class="gallery-video">
+                        <source src="{{ video.video.url }}" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

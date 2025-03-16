@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Modifier le Paiement{% endblock %}
+
+{% block content %}
+<div class="detail-section">
+    <div class="section-title">
+        <i class="fas fa-edit"></i>
+        Modifier le Paiement #{{ payment.id }}
+    </div>
+
+    {% if payment.annonce %}
+    <div class="detail-section mb-4">
+        <h3 class="section-subtitle">
+            <i class="fas fa-bullhorn"></i>
+            Annonce Liée
+        </h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">Titre</div>
+                <div class="detail-value">{{ payment.annonce.titre }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Catégorie</div>
+                <div class="detail-value">{{ payment.annonce.categorie.nom }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Localisation</div>
+                <div class="detail-value">{{ payment.annonce.localisation }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" class="custom-form">
+        {% csrf_token %}
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">ID Transaction</div>
+                <input type="text" name="transaction_id" value="{{ payment.transaction_id }}" class="form-control" style="background-color: #2d2d2d; color: #ffffff; border: 1px solid #3d3d3d;" readonly>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Statut</div>
+                <select name="status" class="form-control">
+                    <option value="pending" {% if payment.status == 'pending' %}selected{% endif %}>En attente</option>
+                    <option value="completed" {% if payment.status == 'completed' %}selected{% endif %}>Complété</option>
+                    <option value="failed" {% if payment.status == 'failed' %}selected{% endif %}>Échoué</option>
+                    <option value="refunded" {% if payment.status == 'refunded' %}selected{% endif %}>Remboursé</option>
+                </select>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Montant</div>
+                <input type="number" name="amount" value="{{ payment.amount }}" class="form-control" step="0.01">
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Type de Paiement</div>
+                <select name="payment_type" class="form-control">
+                    <option value="CINETPAY" {% if payment.payment_type == 'CINETPAY' %}selected{% endif %}>CinetPay</option>
+                    <option value="ORANGE_MONEY" {% if payment.payment_type == 'ORANGE_MONEY' %}selected{% endif %}>Orange Money</option>
+                    <option value="MOOV_MONEY" {% if payment.payment_type == 'MOOV_MONEY' %}selected{% endif %}>Moov Money</option>
+                </select>
+            </div>
+            <div class="detail-item span-2">
+                <div class="detail-label">Description</div>
+                <textarea name="description" class="form-control" rows="3">{{ payment.description }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'dashboard:payment_detail' payment.id %}" class="action-btn">Annuler</a>
+            <button type="submit" class="action-btn">
+                <i class="fas fa-save"></i>
+                Enregistrer
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

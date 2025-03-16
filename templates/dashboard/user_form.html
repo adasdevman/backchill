@@ -1,0 +1,108 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} un utilisateur - Dashboard{% endblock %}
+
+{% block content %}
+<div class="data-table-container">
+    <div class="data-table-header">
+        <h2 class="data-title">
+            <i class="fas fa-user-{{ action|lower }}"></i> 
+            {{ action }} un utilisateur
+        </h2>
+    </div>
+    
+    <form method="post" class="custom-form">
+        {% csrf_token %}
+        {% if action == 'Modifier' %}
+        <div class="form-group mb-3">
+            <label class="form-label">Nom d'utilisateur</label>
+            <input type="text" name="username" class="form-control" 
+                   value="{{ user.username }}" required>
+        </div>
+        {% endif %}
+        
+        <div class="form-group mb-3">
+            <label class="form-label">Prénom</label>
+            <input type="text" name="first_name" class="form-control" 
+                   value="{% if user %}{{ user.first_name }}{% endif %}">
+        </div>
+        
+        <div class="form-group mb-3">
+            <label class="form-label">Nom</label>
+            <input type="text" name="last_name" class="form-control" 
+                   value="{% if user %}{{ user.last_name }}{% endif %}">
+        </div>
+        
+        <div class="form-group mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" 
+                   value="{% if user %}{{ user.email }}{% endif %}" required>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label class="form-label">Mot de passe {% if action == 'Modifier' %}(laisser vide pour ne pas modifier){% endif %}</label>
+            <input type="password" name="password" class="form-control" 
+                   {% if action == 'Créer' %}required{% endif %}>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label class="form-label">Rôle</label>
+            <select name="role" class="form-control" required id="roleSelect">
+                <option value="UTILISATEUR" {% if user.role == 'UTILISATEUR' %}selected{% endif %}>Utilisateur</option>
+                <option value="ANNONCEUR" {% if user.role == 'ANNONCEUR' %}selected{% endif %}>Annonceur</option>
+                <option value="ADMIN" {% if user.role == 'ADMIN' %}selected{% endif %}>Administrateur</option>
+            </select>
+        </div>
+        
+        <div class="form-group mb-3" id="companyNameGroup" style="display: {% if user.role == 'ANNONCEUR' %}block{% else %}none{% endif %};">
+            <label class="form-label">Nom de l'entreprise</label>
+            <input type="text" name="company_name" class="form-control" 
+                   value="{% if user %}{{ user.company_name }}{% endif %}"
+                   {% if user.role == 'ANNONCEUR' %}required{% endif %}>
+        </div>
+        
+        <div class="form-group mb-3" id="tauxAvanceGroup" style="display: {% if user.role == 'ANNONCEUR' %}block{% else %}none{% endif %};">
+            <label class="form-label">Taux d'avance (%)</label>
+            <input type="number" name="taux_avance" class="form-control" 
+                   value="{% if user %}{{ user.taux_avance }}{% endif %}"
+                   min="0" max="100"
+                   {% if user.role == 'ANNONCEUR' %}required{% endif %}>
+            <small class="form-text text-muted">Pourcentage d'avance requis pour les annonces (0-100)</small>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label class="form-label">Téléphone</label>
+            <input type="tel" name="telephone" class="form-control" 
+                   value="{% if user %}{{ user.phone_number }}{% endif %}">
+        </div>
+        
+        <div class="form-buttons">
+            <button type="submit" class="form-btn btn-create">
+                {% if user %}Modifier{% else %}Créer{% endif %}
+            </button>
+            <a href="{% url 'dashboard:users' %}" class="form-btn btn-cancel">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('roleSelect').addEventListener('change', function() {
+        var companyNameGroup = document.getElementById('companyNameGroup');
+        var tauxAvanceGroup = document.getElementById('tauxAvanceGroup');
+        var companyNameInput = companyNameGroup.querySelector('input');
+        var tauxAvanceInput = tauxAvanceGroup.querySelector('input');
+        if (this.value === 'ANNONCEUR') {
+            companyNameGroup.style.display = 'block';
+            tauxAvanceGroup.style.display = 'block';
+            companyNameInput.required = true;
+            tauxAvanceInput.required = true;
+        } else {
+            companyNameGroup.style.display = 'none';
+            tauxAvanceGroup.style.display = 'none';
+            companyNameInput.required = false;
+            tauxAvanceInput.required = false;
+        }
+    });
+</script>
+{% endblock %} 

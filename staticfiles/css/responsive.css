@@ -1,0 +1,192 @@
+/* Styles de base pour la navbar */
+.navbar {
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Styles pour mobile */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        padding-top: 0.5rem;
+    }
+
+    .navbar-nav {
+        padding-bottom: 0.5rem;
+    }
+
+    .nav-item {
+        padding: 0.5rem 0;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .nav-item:last-child {
+        border-bottom: none;
+    }
+
+    .nav-link {
+        padding: 0.5rem 1rem !important;
+        text-align: center;
+    }
+}
+
+/* Styles pour desktop */
+@media (min-width: 992px) {
+    .navbar-nav {
+        align-items: center;
+    }
+
+    .nav-item {
+        margin: 0 0.5rem;
+    }
+
+    .nav-link {
+        padding: 0.5rem 1rem !important;
+    }
+}
+
+/* Animation pour le menu mobile */
+.navbar-collapse {
+    transition: all 0.3s ease;
+}
+
+.navbar-collapse.show {
+    animation: slideDown 0.3s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styles pour les appareils mobiles */
+@media screen and (max-width: 768px) {
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-collapse {
+        display: none;
+        width: 100%;
+    }
+
+    .navbar-collapse.show {
+        display: block;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-item {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .dropdown-menu {
+        position: static;
+        float: none;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Styles pour le bouton hamburger - toujours visible sur mobile */
+.navbar-toggle {
+    display: none;  /* Par défaut caché */
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1000;
+}
+
+.navbar-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+/* Media queries pour mobile */
+@media screen and (max-width: 991px) {  /* Changé à 991px pour correspondre à Bootstrap lg breakpoint */
+    .navbar-toggle {
+        display: block;  /* Afficher le hamburger sur mobile */
+    }
+
+    .navbar-collapse {
+        display: none;
+        position: absolute;
+        top: 60px;  /* Ajusté pour éviter le chevauchement avec la navbar */
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-collapse.show {
+        display: block;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .nav-item {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .nav-item:last-child {
+        border-bottom: none;
+    }
+}
+
+/* Animation du bouton hamburger */
+.navbar-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.navbar-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Styles pour la navbar en version desktop */
+@media screen and (min-width: 992px) {
+    .navbar-collapse {
+        display: flex !important;
+    }
+    
+    .navbar-nav {
+        flex-direction: row;
+    }
+    
+    .nav-item {
+        margin: 0 10px;
+    }
+} 

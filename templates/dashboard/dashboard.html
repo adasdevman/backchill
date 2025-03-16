@@ -1,0 +1,161 @@
+{% extends 'dashboard/base.html' %}
+{% load dashboard_tags %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Statistiques générales -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Utilisateurs</h3>
+                <p>{{ total_users }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Annonces</h3>
+                <p>{{ total_annonces }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Réservations</h3>
+                <p>{{ total_reservations }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Revenus</h3>
+                <p>{{ total_revenue }} FCFA</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3>Répartition des annonces par catégorie</h3>
+            {% if categories %}
+                <canvas id="categoriesChart"></canvas>
+                <div class="categories-legend mt-3">
+                    {% for cat in categories %}
+                    <div class="category-item">
+                        <span class="category-color" style="background-color: {{ forloop.counter0|get_color }}"></span>
+                        <span class="category-name">{{ cat.nom }} ({{ annonces_par_categorie|index:forloop.counter0|default:0 }})</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center text-muted">Aucune catégorie disponible</p>
+            {% endif %}
+        </div>
+        <div class="chart-card">
+            <h3>Évolution des inscriptions</h3>
+            <canvas id="registrationsChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<style>
+.categories-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.category-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.category-name {
+    font-size: 0.9rem;
+}
+</style>
+
+<script>
+    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+    
+    {% if categories %}
+    // Graphique des catégories
+    var ctxCategories = document.getElementById('categoriesChart').getContext('2d');
+    var categoriesChart = new Chart(ctxCategories, {
+        type: 'pie',
+        data: {
+            labels: [{% for cat in categories %}'{{ cat.nom }} ({{ annonces_par_categorie|index:forloop.counter0|default:0 }})',{% endfor %}],
+            datasets: [{
+                data: [{% for count in annonces_par_categorie %}{{ count|default:0 }},{% endfor %}],
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            size: 14
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            let value = context.raw || 0;
+                            return `${label}: ${value} annonces`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    {% endif %}
+
+    // Graphique des inscriptions
+    var ctxRegistrations = document.getElementById('registrationsChart').getContext('2d');
+    var registrationsChart = new Chart(ctxRegistrations, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Nouvelles inscriptions',
+                data: {{ inscriptions|safe }},
+                borderColor: '#36A2EB',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 
