@@ -8,6 +8,12 @@ from django.db import IntegrityError
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserProfileSerializer
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+from core.services.email_service import EmailService
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 class LoginView(APIView):
     permission_classes = []  # Permettre l'accès sans authentification
@@ -123,3 +129,34 @@ def update_billing_info(request):
             {'error': str(e)}, 
             status=status.HTTP_400_BAD_REQUEST
         )
+
+class CustomPasswordResetView(PasswordResetView):
+    success_url = reverse_lazy('dashboard:password_reset_done')
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    
+    def form_valid(self, form):
+        """
+        Génère un token de réinitialisation et envoie l'email via notre service d'email personnalisé.
+        """
+        email = form.cleaned_data["email"]
+        for user in form.get_users(email):
+            # Génère le token et l'URL de réinitialisation
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            reset_url = self.request.build_absolute_uri(
+                reverse_lazy('dashboard:password_reset_confirm', kwargs={
+                    'uidb64': uid,
+                    'token': token
+                })
+            )
+            
+            # Envoie l'email via notre service
+            email_service = EmailService()
+            email_service.send_password_reset_email(
+                user_email=user.email,
+                user_name=user.get_full_name() or user.email,
+                reset_url=reset_url
+            )
+        
+        return super().form_valid(form)

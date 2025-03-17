@@ -239,6 +239,15 @@ CINETPAY = {
 # Brevo (Sendinblue) Configuration
 BREVO_API_KEY = os.getenv('BREVO_API_KEY')
 
+# Configuration Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'chillnow.app@gmail.com'
+EMAIL_HOST_PASSWORD = BREVO_API_KEY
+DEFAULT_FROM_EMAIL = 'ChillNow <chillnow.app@gmail.com>'
+
 # Modification de la configuration WhiteNoise
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_MANIFEST_STRICT = False

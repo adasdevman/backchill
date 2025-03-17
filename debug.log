@@ -15265,3 +15265,430 @@ INFO 2025-03-16 11:59:53,229 basehttp 26820 5524 "GET /dashboard/ HTTP/1.1" 200 
 INFO 2025-03-16 12:00:00,182 basehttp 26820 5524 "GET /dashboard/users/ HTTP/1.1" 200 18708
 INFO 2025-03-16 12:05:08,352 autoreload 26820 24220 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
 INFO 2025-03-16 12:05:13,465 autoreload 25368 20084 Watching for file changes with StatReloader
+INFO 2025-03-16 17:56:19,850 autoreload 25368 20084 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-16 17:56:26,897 autoreload 20564 25512 Watching for file changes with StatReloader
+INFO 2025-03-16 18:04:37,528 autoreload 20564 25512 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-16 18:04:40,434 autoreload 26544 21116 Watching for file changes with StatReloader
+INFO 2025-03-16 18:08:29,364 autoreload 26544 21116 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-16 18:08:32,134 autoreload 6812 15848 Watching for file changes with StatReloader
+INFO 2025-03-16 18:26:38,375 autoreload 6812 15848 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-16 18:26:41,273 autoreload 23948 5048 Watching for file changes with StatReloader
+INFO 2025-03-16 18:28:31,182 autoreload 23948 5048 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-16 18:28:33,468 autoreload 4444 28068 Watching for file changes with StatReloader
+INFO 2025-03-17 07:34:33,449 autoreload 3336 16104 Watching for file changes with StatReloader
+INFO 2025-03-17 07:36:18,644 basehttp 3336 7900 "GET / HTTP/1.1" 302 0
+INFO 2025-03-17 07:36:18,655 basehttp 3336 7900 "GET /dashboard/ HTTP/1.1" 302 0
+INFO 2025-03-17 07:36:18,721 basehttp 3336 7900 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3951
+INFO 2025-03-17 07:36:21,947 basehttp 3336 7900 "GET /static/css/dashboard.css HTTP/1.1" 200 17121
+INFO 2025-03-17 07:36:22,870 basehttp 3336 6132 "GET /static/images/Chillnow%20logo%201.png HTTP/1.1" 200 12694
+WARNING 2025-03-17 07:36:24,725 log 3336 6132 Not Found: /favicon.ico
+WARNING 2025-03-17 07:36:24,725 basehttp 3336 6132 "GET /favicon.ico HTTP/1.1" 404 3606
+INFO 2025-03-17 07:39:00,133 basehttp 3336 12208 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3962
+ERROR 2025-03-17 07:39:02,732 log 3336 12208 Internal Server Error: /password_reset/
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+               ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'dashboard' not found. 'dashboard' is not a valid view function or pattern name.
+ERROR 2025-03-17 07:39:02,749 basehttp 3336 12208 "GET /password_reset/ HTTP/1.1" 500 143270
+INFO 2025-03-17 07:40:44,286 autoreload 3336 16104 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\users\views.py changed, reloading.
+INFO 2025-03-17 07:40:48,016 autoreload 11360 14132 Watching for file changes with StatReloader
+INFO 2025-03-17 07:41:03,811 autoreload 11360 14132 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\urls.py changed, reloading.
+INFO 2025-03-17 07:41:06,595 autoreload 13932 9652 Watching for file changes with StatReloader
+WARNING 2025-03-17 07:43:42,217 log 13932 7108 Not Found: /password_reset/
+WARNING 2025-03-17 07:43:42,223 basehttp 13932 7108 "GET /password_reset/ HTTP/1.1" 404 3698
+WARNING 2025-03-17 07:43:44,450 log 13932 7108 Not Found: /password_reset/
+WARNING 2025-03-17 07:43:44,452 basehttp 13932 7108 "GET /password_reset/ HTTP/1.1" 404 3698
+ERROR 2025-03-17 07:43:47,167 log 13932 7108 Internal Server Error: /dashboard/login/
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\views.py", line 56, in dashboard_login
+    return render(request, 'dashboard/login.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'password_reset' not found. 'password_reset' is not a valid view function or pattern name.
+ERROR 2025-03-17 07:43:47,206 basehttp 13932 7108 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 500 160847
+INFO 2025-03-17 07:43:48,412 autoreload 13932 9652 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\users\views.py changed, reloading.
+INFO 2025-03-17 07:43:50,505 autoreload 16812 1652 Watching for file changes with StatReloader
+ERROR 2025-03-17 07:44:01,088 log 16812 16800 Internal Server Error: /dashboard/login/
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\views.py", line 56, in dashboard_login
+    return render(request, 'dashboard/login.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'password_reset' not found. 'password_reset' is not a valid view function or pattern name.
+ERROR 2025-03-17 07:44:01,121 basehttp 16812 16800 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 500 160847
+INFO 2025-03-17 07:45:37,660 autoreload 16812 1652 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\urls.py changed, reloading.
+INFO 2025-03-17 07:45:40,200 autoreload 3216 1140 Watching for file changes with StatReloader
+INFO 2025-03-17 07:46:09,557 autoreload 3216 1140 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\urls.py changed, reloading.
+INFO 2025-03-17 07:46:12,006 autoreload 16032 9652 Watching for file changes with StatReloader
+INFO 2025-03-17 07:46:17,461 autoreload 16032 9652 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\urls.py changed, reloading.
+INFO 2025-03-17 07:46:19,638 autoreload 15964 9136 Watching for file changes with StatReloader
+INFO 2025-03-17 07:47:39,079 autoreload 15964 9136 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\urls.py changed, reloading.
+INFO 2025-03-17 07:47:41,875 autoreload 13644 3552 Watching for file changes with StatReloader
+INFO 2025-03-17 07:47:48,368 basehttp 13644 16280 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3972
+ERROR 2025-03-17 07:47:52,338 log 13644 16280 Internal Server Error: /dashboard/password_reset/
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\base.py", line 220, in _get_response
+    response = response.render()
+               ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\base.py", line 969, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'dashboard' not found. 'dashboard' is not a valid view function or pattern name.
+ERROR 2025-03-17 07:47:52,352 basehttp 13644 16280 "GET /dashboard/password_reset/ HTTP/1.1" 500 143407
+INFO 2025-03-17 08:29:40,875 basehttp 13644 9792 "GET /dashboard/password_reset/ HTTP/1.1" 200 3662
+INFO 2025-03-17 08:29:49,118 basehttp 13644 9792 "GET /dashboard/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:29:49,129 basehttp 13644 9792 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:29:51,309 basehttp 13644 9792 "GET /dashboard/login/?next=/dashboard/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:29:52,693 basehttp 13644 9792 "GET /dashboard/password_reset/ HTTP/1.1" 200 3662
+INFO 2025-03-17 08:29:58,593 basehttp 13644 9792 "POST /dashboard/password_reset/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:29:58,767 basehttp 13644 9792 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 3357
+INFO 2025-03-17 08:30:23,839 basehttp 13644 9792 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:30:25,670 basehttp 13644 9792 "GET /dashboard/password_reset/ HTTP/1.1" 200 3662
+INFO 2025-03-17 08:32:13,431 autoreload 13644 3552 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-17 08:32:14,329 autoreload 15680 7904 Watching for file changes with StatReloader
+INFO 2025-03-17 08:33:24,964 autoreload 15680 7904 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-17 08:33:25,829 autoreload 8428 5376 Watching for file changes with StatReloader
+INFO 2025-03-17 08:33:44,575 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 4500
+INFO 2025-03-17 08:33:54,380 basehttp 8428 6924 "POST /dashboard/password_reset/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:33:54,385 basehttp 8428 6924 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 3357
+INFO 2025-03-17 08:36:31,575 basehttp 8428 6924 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 3928
+INFO 2025-03-17 08:36:40,141 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:36:42,204 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 4500
+INFO 2025-03-17 08:36:44,033 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 4500
+INFO 2025-03-17 08:36:49,429 basehttp 8428 6924 "POST /dashboard/password_reset/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:36:49,445 basehttp 8428 6924 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 3928
+INFO 2025-03-17 08:36:53,625 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:36:58,580 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 4500
+INFO 2025-03-17 08:37:39,944 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:39:57,239 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:39:58,405 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:39:59,252 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:40:00,538 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 5990
+INFO 2025-03-17 08:40:09,304 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 5990
+INFO 2025-03-17 08:40:15,114 basehttp 8428 6924 "POST /dashboard/password_reset/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:40:15,114 basehttp 8428 6924 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 5959
+INFO 2025-03-17 08:40:19,090 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:41:28,097 basehttp 8428 6924 "POST /dashboard/login/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:41:31,720 basehttp 8428 6924 "GET /dashboard/ HTTP/1.1" 200 8918
+INFO 2025-03-17 08:41:37,266 basehttp 8428 6924 "GET /dashboard/users/ HTTP/1.1" 200 18696
+INFO 2025-03-17 08:45:23,855 basehttp 8428 6924 "GET /dashboard/logout/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:45:23,862 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:45:30,019 basehttp 8428 6924 "GET /dashboard/password_reset/ HTTP/1.1" 200 5990
+ERROR 2025-03-17 08:45:39,399 forms 8428 6924 Failed to send password reset email to 2
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\contrib\auth\forms.py", line 424, in send_mail
+    email_message.send()
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Python312\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Python312\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Python312\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Authentication failed')
+INFO 2025-03-17 08:45:39,797 basehttp 8428 6924 "POST /dashboard/password_reset/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:45:39,802 basehttp 8428 6924 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 5959
+INFO 2025-03-17 08:45:42,492 basehttp 8428 6924 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:46:07,735 basehttp 8428 6924 "GET /dashboard/reset/Mg/cmswbz-42905a762278de828c54aef387f590ca/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:46:09,931 basehttp 8428 6924 "GET /dashboard/reset/Mg/set-password/ HTTP/1.1" 200 7057
+ERROR 2025-03-17 08:46:41,412 log 8428 6924 Internal Server Error: /dashboard/reset/Mg/set-password/
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\decorators\debug.py", line 143, in sensitive_post_parameters_wrapper
+    return view(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\utils\decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\decorators\cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\contrib\auth\views.py", line 284, in dispatch
+    return super().dispatch(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\generic\edit.py", line 151, in post
+    return self.form_valid(form)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\contrib\auth\views.py", line 325, in form_valid
+    return super().form_valid(form)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\generic\edit.py", line 63, in form_valid
+    return HttpResponseRedirect(self.get_success_url())
+                                ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\views\generic\edit.py", line 57, in get_success_url
+    if not self.success_url:
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\utils\functional.py", line 187, in __wrapper__
+    result = func(*self._args, **self._kw)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'password_reset_complete' not found. 'password_reset_complete' is not a valid view function or pattern name.
+ERROR 2025-03-17 08:46:41,415 basehttp 8428 6924 "POST /dashboard/reset/Mg/set-password/ HTTP/1.1" 500 147307
+INFO 2025-03-17 08:47:37,881 autoreload 8428 5376 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\urls.py changed, reloading.
+INFO 2025-03-17 08:47:38,697 autoreload 15100 17064 Watching for file changes with StatReloader
+INFO 2025-03-17 08:47:57,115 autoreload 15100 17064 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\users\views.py changed, reloading.
+INFO 2025-03-17 08:47:57,912 autoreload 2780 1776 Watching for file changes with StatReloader
+INFO 2025-03-17 08:48:14,175 autoreload 2780 1776 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\urls.py changed, reloading.
+INFO 2025-03-17 08:48:15,035 autoreload 7580 16968 Watching for file changes with StatReloader
+INFO 2025-03-17 08:48:21,477 autoreload 7580 16968 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\urls.py changed, reloading.
+INFO 2025-03-17 08:48:22,402 autoreload 19264 10176 Watching for file changes with StatReloader
+INFO 2025-03-17 08:48:35,667 autoreload 19264 10176 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\urls.py changed, reloading.
+INFO 2025-03-17 08:48:36,515 autoreload 13424 17528 Watching for file changes with StatReloader
+INFO 2025-03-17 08:48:42,233 basehttp 13424 17032 "POST /dashboard/reset/Mg/set-password/ HTTP/1.1" 200 6276
+INFO 2025-03-17 08:48:47,366 basehttp 13424 17032 "GET /dashboard/password_reset/ HTTP/1.1" 200 5990
+ERROR 2025-03-17 08:49:12,309 forms 13424 17032 Failed to send password reset email to 2
+Traceback (most recent call last):
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\contrib\auth\forms.py", line 424, in send_mail
+    email_message.send()
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\mail\message.py", line 301, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\mail\backends\smtp.py", line 128, in send_messages
+    new_conn_created = self.open()
+                       ^^^^^^^^^^^
+  File "C:\Users\Nevada Man\CascadeProjects\chillnow\venv\Lib\site-packages\django\core\mail\backends\smtp.py", line 95, in open
+    self.connection.login(self.username, self.password)
+  File "C:\Python312\Lib\smtplib.py", line 750, in login
+    raise last_exception
+  File "C:\Python312\Lib\smtplib.py", line 739, in login
+    (code, resp) = self.auth(
+                   ^^^^^^^^^^
+  File "C:\Python312\Lib\smtplib.py", line 662, in auth
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (535, b'5.7.8 Authentication failed')
+INFO 2025-03-17 08:49:12,316 basehttp 13424 17032 "POST /dashboard/password_reset/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:49:14,469 basehttp 13424 17032 "GET /dashboard/password_reset/done/ HTTP/1.1" 200 5959
+INFO 2025-03-17 08:49:33,199 basehttp 13424 17032 "GET /dashboard/reset/Mg/cmswhx-599e8f1d9ee665d891e1e5c4b290c854/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:49:35,259 basehttp 13424 17032 "GET /dashboard/reset/Mg/set-password/ HTTP/1.1" 200 7057
+INFO 2025-03-17 08:49:56,699 basehttp 13424 17032 "POST /dashboard/reset/Mg/set-password/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:49:58,487 basehttp 13424 17032 "GET /dashboard/reset/done/ HTTP/1.1" 200 6097
+INFO 2025-03-17 08:50:10,989 basehttp 13424 17032 "GET /dashboard/login/ HTTP/1.1" 200 3972
+INFO 2025-03-17 08:50:34,982 basehttp 13424 17032 "POST /dashboard/login/ HTTP/1.1" 200 4121
+INFO 2025-03-17 08:50:56,682 basehttp 13424 17032 "POST /dashboard/login/ HTTP/1.1" 302 0
+INFO 2025-03-17 08:51:00,241 basehttp 13424 17032 "GET /dashboard/ HTTP/1.1" 200 8918
+INFO 2025-03-17 09:33:09,658 autoreload 13656 4276 Watching for file changes with StatReloader
