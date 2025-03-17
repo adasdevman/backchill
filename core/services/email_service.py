@@ -81,23 +81,40 @@ class EmailService:
         </html>
         """
 
-    def send_welcome_email(self, user_email, first_name=''):
+    def send_welcome_email(self, user_email, first_name='', role='UTILISATEUR'):
         try:
-            subject = "Bienvenue sur ChillNow!"
-            content = f"""
-                <h2>Bienvenue sur ChillNow {first_name}!</h2>
-                <p>Nous sommes ravis de vous compter parmi nous.</p>
-                <p>Avec ChillNow, vous pouvez :</p>
-                <ul>
-                    <li>Découvrir les meilleurs endroits pour sortir</li>
-                    <li>Réserver vos places en quelques clics</li>
-                    <li>Acheter vos tickets d'événements</li>
-                    <li>Profiter d'offres exclusives</li>
-                </ul>
-                <p>Si vous avez des questions, notre équipe est là pour vous aider.</p>
-                <p>À très bientôt sur ChillNow!</p>
-                <p>L'équipe ChillNow</p>
-            """
+            if role == 'ANNONCEUR':
+                subject = "Bienvenue sur ChillNow - Votre espace annonceur"
+                content = f"""
+                    <h2>Bienvenue {first_name}!</h2>
+                    <p>Nous sommes ravis de vous accueillir en tant qu'annonceur sur ChillNow.</p>
+                    <p>Votre compte annonceur vous permet de :</p>
+                    <ul>
+                        <li>Gérer vos établissements et événements</li>
+                        <li>Suivre vos réservations en temps réel</li>
+                        <li>Analyser vos ventes de tickets</li>
+                        <li>Personnaliser vos offres et tarifs</li>
+                    </ul>
+                    <p>Notre équipe est à votre disposition pour vous accompagner dans la gestion de vos annonces.</p>
+                    <p>À très bientôt sur ChillNow!</p>
+                    <p>L'équipe ChillNow</p>
+                """
+            else:
+                subject = "Bienvenue sur ChillNow!"
+                content = f"""
+                    <h2>Bienvenue sur ChillNow {first_name}!</h2>
+                    <p>Nous sommes ravis de vous compter parmi nous.</p>
+                    <p>Avec ChillNow, vous pouvez :</p>
+                    <ul>
+                        <li>Découvrir les meilleurs endroits pour sortir</li>
+                        <li>Réserver vos places en quelques clics</li>
+                        <li>Acheter vos tickets d'événements</li>
+                        <li>Profiter d'offres exclusives</li>
+                    </ul>
+                    <p>Si vous avez des questions, notre équipe est là pour vous aider.</p>
+                    <p>À très bientôt sur ChillNow!</p>
+                    <p>L'équipe ChillNow</p>
+                """
 
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": user_email, "name": first_name}],
@@ -110,37 +127,6 @@ class EmailService:
             return True
         except ApiException as e:
             print(f"Exception when sending welcome email: {e}")
-            return False
-
-    def send_advertiser_welcome_email(self, user_email, first_name=''):
-        try:
-            subject = "Bienvenue sur ChillNow - Votre espace annonceur"
-            content = f"""
-                <h2>Bienvenue {first_name}!</h2>
-                <p>Nous sommes ravis de vous accueillir en tant qu'annonceur sur ChillNow.</p>
-                <p>Votre compte annonceur vous permet de :</p>
-                <ul>
-                    <li>Gérer vos établissements et événements</li>
-                    <li>Suivre vos réservations en temps réel</li>
-                    <li>Analyser vos ventes de tickets</li>
-                    <li>Personnaliser vos offres et tarifs</li>
-                </ul>
-                <p>Notre équipe est à votre disposition pour vous accompagner dans la gestion de vos annonces.</p>
-                <p>À très bientôt sur ChillNow!</p>
-                <p>L'équipe ChillNow</p>
-            """
-
-            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-                to=[{"email": user_email, "name": first_name}],
-                html_content=self._get_base_template(content),
-                sender=self.default_sender,
-                subject=subject
-            )
-
-            self.api_instance.send_transac_email(send_smtp_email)
-            return True
-        except ApiException as e:
-            print(f"Exception when sending advertiser welcome email: {e}")
             return False
 
     def send_booking_confirmation(self, user_email, user_name, booking_details):
@@ -288,34 +274,6 @@ class EmailService:
             return True
         except ApiException as e:
             print(f"Exception when sending password reset: {e}")
-            return False
-
-    def send_advertiser_welcome(self, user_email, user_name):
-        try:
-            subject = "Bienvenue sur ChillNow - Espace Annonceur"
-            content = f"""
-                <h2>Bienvenue {user_name} !</h2>
-                <p>Nous sommes ravis de vous accueillir en tant qu'annonceur sur ChillNow.</p>
-                <p>En tant qu'annonceur, vous pouvez :</p>
-                <ul>
-                    <li>Créer et gérer vos annonces</li>
-                    <li>Suivre vos réservations en temps réel</li>
-                    <li>Gérer vos ventes de tickets</li>
-                    <li>Accéder à vos statistiques</li>
-                </ul>
-                <p>Pour commencer à publier vos annonces, rendez-vous sur votre espace annonceur.</p>
-                <p>Notre équipe est là pour vous accompagner dans vos premiers pas.</p>
-            """
-            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-                to=[{"email": user_email, "name": user_name}],
-                html_content=self._get_base_template(content),
-                sender=self.default_sender,
-                subject=subject
-            )
-            self.api_instance.send_transac_email(send_smtp_email)
-            return True
-        except ApiException as e:
-            print(f"Exception when sending advertiser welcome: {e}")
             return False
 
     def send_new_booking_notification(self, advertiser_email, advertiser_name, booking_details):

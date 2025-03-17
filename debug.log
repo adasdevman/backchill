@@ -15703,3 +15703,20 @@ INFO 2025-03-17 10:06:10,113 autoreload 11632 14068 C:\Users\Nevada Man\CascadeP
 INFO 2025-03-17 10:06:11,289 autoreload 7384 13792 Watching for file changes with StatReloader
 INFO 2025-03-17 10:06:47,436 autoreload 7384 13792 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
 INFO 2025-03-17 10:06:48,926 autoreload 17468 18952 Watching for file changes with StatReloader
+INFO 2025-03-17 10:12:25,655 autoreload 17468 18952 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:12:26,703 autoreload 18340 13236 Watching for file changes with StatReloader
+INFO 2025-03-17 10:12:34,799 autoreload 18340 13236 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:12:36,695 autoreload 5440 7032 Watching for file changes with StatReloader
+INFO 2025-03-17 10:13:21,672 autoreload 5440 7032 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:13:23,039 autoreload 4752 15524 Watching for file changes with StatReloader
+INFO 2025-03-17 10:13:32,745 autoreload 4752 15524 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:13:33,707 autoreload 20088 17468 Watching for file changes with StatReloader
+INFO 2025-03-17 10:13:42,340 autoreload 20088 17468 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:13:43,510 autoreload 2640 20220 Watching for file changes with StatReloader
+INFO 2025-03-17 10:13:48,360 autoreload 2640 20220 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:13:49,560 autoreload 18164 17468 Watching for file changes with StatReloader
+INFO 2025-03-17 10:17:02,992 autoreload 18164 17468 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:17:04,314 autoreload 1764 6924 Watching for file changes with StatReloader
+INFO 2025-03-17 10:17:17,490 autoreload 1764 6924 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:17:18,617 autoreload 17644 13880 Watching for file changes with StatReloader
+INFO 2025-03-17 10:17:35,842 autoreload 17644 13880 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\api\views.py changed, reloading.

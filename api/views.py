@@ -110,11 +110,12 @@ def register_view(request):
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
         
-        # Envoyer l'email de bienvenue
+        # Envoyer l'email de bienvenue avec le rôle UTILISATEUR
         email_service = EmailService()
         email_service.send_welcome_email(
             user_email=user.email,
-            first_name=user.first_name or 'Utilisateur'
+            first_name=user.first_name or 'Utilisateur',
+            role='UTILISATEUR'
         )
         
         return Response({
@@ -132,11 +133,12 @@ def register_annonceur_view(request):
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
         
-        # Envoyer l'email de bienvenue spécifique aux annonceurs
+        # Envoyer l'email de bienvenue avec le rôle ANNONCEUR
         email_service = EmailService()
-        email_service.send_advertiser_welcome_email(
+        email_service.send_welcome_email(
             user_email=user.email,
-            first_name=user.first_name or 'Annonceur'
+            first_name=user.first_name or 'Annonceur',
+            role='ANNONCEUR'
         )
         
         return Response({
