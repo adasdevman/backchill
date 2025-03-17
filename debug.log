@@ -15692,3 +15692,14 @@ INFO 2025-03-17 08:50:34,982 basehttp 13424 17032 "POST /dashboard/login/ HTTP/1
 INFO 2025-03-17 08:50:56,682 basehttp 13424 17032 "POST /dashboard/login/ HTTP/1.1" 302 0
 INFO 2025-03-17 08:51:00,241 basehttp 13424 17032 "GET /dashboard/ HTTP/1.1" 200 8918
 INFO 2025-03-17 09:33:09,658 autoreload 13656 4276 Watching for file changes with StatReloader
+INFO 2025-03-17 09:54:57,450 basehttp 13656 4236 "GET /dashboard/users/ HTTP/1.1" 200 18710
+INFO 2025-03-17 10:01:40,624 autoreload 13656 4276 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:01:42,051 autoreload 15648 17772 Watching for file changes with StatReloader
+INFO 2025-03-17 10:02:07,456 autoreload 15648 17772 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:02:08,580 autoreload 16576 4700 Watching for file changes with StatReloader
+INFO 2025-03-17 10:05:49,604 autoreload 16576 4700 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:05:50,845 autoreload 11632 14068 Watching for file changes with StatReloader
+INFO 2025-03-17 10:06:10,113 autoreload 11632 14068 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\api\views.py changed, reloading.
+INFO 2025-03-17 10:06:11,289 autoreload 7384 13792 Watching for file changes with StatReloader
+INFO 2025-03-17 10:06:47,436 autoreload 7384 13792 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-17 10:06:48,926 autoreload 17468 18952 Watching for file changes with StatReloader
