@@ -269,7 +269,25 @@ class AnnonceDetail(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def perform_update(self, serializer):
-        serializer.save(utilisateur=self.request.user)
+        old_status = self.get_object().status
+        instance = serializer.save(utilisateur=self.request.user)
+        
+        # Si le statut a changé, envoyer un email
+        if old_status != instance.status:
+            email_service = EmailService()
+            
+            announcement_details = {
+                'status': instance.status,
+                'title': instance.titre,
+                'reason': 'Votre annonce a été examinée par notre équipe',
+                'next_steps': 'Vous pouvez maintenant la consulter sur la plateforme.' if instance.status == 'ACTIVE' else 'Veuillez contacter notre support pour plus d\'informations.'
+            }
+            
+            email_service.send_announcement_status_update(
+                advertiser_email=instance.utilisateur.email,
+                advertiser_name=f"{instance.utilisateur.first_name} {instance.utilisateur.last_name}",
+                announcement_details=announcement_details
+            )
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
