@@ -110,7 +110,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/media'  # Point de montage du disque Render
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Chemin relatif dans le projet
 
 LOGIN_URL = '/dashboard/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
