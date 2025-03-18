@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from .base import TimeStampedModel
+from django.utils import timezone
 
 class Categorie(models.Model):
     nom = models.CharField(max_length=50, unique=True)
@@ -114,7 +115,7 @@ class Tarif(models.Model):
 class GaleriePhoto(models.Model):
     annonce = models.ForeignKey(Annonce, related_name='photos', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='annonces/photos/')
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True, default=timezone.now)
 
     class Meta:
         verbose_name = 'Photo'
