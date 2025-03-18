@@ -15760,3 +15760,17 @@ INFO 2025-03-18 04:34:03,609 autoreload 25544 22668 C:\Users\Nevada Man\CascadeP
 INFO 2025-03-18 04:34:04,476 autoreload 12292 4384 Watching for file changes with StatReloader
 INFO 2025-03-18 04:34:34,805 autoreload 12292 4384 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
 INFO 2025-03-18 04:34:35,877 autoreload 20640 22588 Watching for file changes with StatReloader
+INFO 2025-03-18 04:46:17,646 autoreload 20640 22588 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-18 04:46:19,480 autoreload 1020 6976 Watching for file changes with StatReloader
+INFO 2025-03-18 04:46:33,384 autoreload 1020 6976 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\models\annonce.py changed, reloading.
+INFO 2025-03-18 04:46:34,406 autoreload 23928 17668 Watching for file changes with StatReloader
+INFO 2025-03-18 04:50:06,672 autoreload 23928 17668 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-18 04:50:07,665 autoreload 20888 20924 Watching for file changes with StatReloader
+INFO 2025-03-18 04:50:11,582 autoreload 20888 20924 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-18 04:50:12,421 autoreload 20788 25524 Watching for file changes with StatReloader
+INFO 2025-03-18 04:50:25,642 autoreload 20788 25524 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\models\annonce.py changed, reloading.
+INFO 2025-03-18 04:50:26,491 autoreload 24516 13844 Watching for file changes with StatReloader
+INFO 2025-03-18 04:50:32,408 autoreload 24516 13844 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\models\annonce.py changed, reloading.
+INFO 2025-03-18 04:50:33,272 autoreload 13828 16140 Watching for file changes with StatReloader
+INFO 2025-03-18 04:51:18,146 autoreload 13828 16140 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\chillnowback\settings.py changed, reloading.
+INFO 2025-03-18 04:51:19,149 autoreload 11628 18528 Watching for file changes with StatReloader

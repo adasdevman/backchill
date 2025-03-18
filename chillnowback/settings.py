@@ -110,7 +110,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/media'  # Point de montage du disque Render
 
 LOGIN_URL = '/dashboard/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
@@ -121,9 +121,14 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Vérifier que le dossier media existe
-if not os.path.exists(MEDIA_ROOT):
-    os.makedirs(MEDIA_ROOT)
+# Configuration des médias
+MEDIA_DIRS = [
+    os.path.join(MEDIA_ROOT, 'annonces/photos'),
+]
+
+# Créer les dossiers nécessaires au démarrage
+for directory in MEDIA_DIRS:
+    os.makedirs(directory, exist_ok=True)
 
 # Configuration du logging
 LOGGING = {

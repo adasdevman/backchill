@@ -114,19 +114,21 @@ class Tarif(models.Model):
 class GaleriePhoto(models.Model):
     annonce = models.ForeignKey(Annonce, related_name='photos', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='annonces/photos/')
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Photo'
         verbose_name_plural = 'Photos'
+        ordering = ['-created']
 
     def __str__(self):
         return f"Photo pour {self.annonce.titre}"
 
     def delete(self, *args, **kwargs):
-        # Delete the physical file first
+        # Supprimer le fichier physique
         if self.image:
             storage = self.image.storage
             if storage.exists(self.image.name):
                 storage.delete(self.image.name)
-        # Then delete the database record
+        # Puis supprimer l'enregistrement de la base de données
         super().delete(*args, **kwargs) 
