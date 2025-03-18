@@ -83,38 +83,21 @@ class EmailService:
 
     def send_welcome_email(self, user_email, first_name='', role='UTILISATEUR'):
         try:
-            if role == 'ANNONCEUR':
-                subject = "Bienvenue sur ChillNow - Votre espace annonceur"
-                content = f"""
-                    <h2>Bienvenue {first_name}!</h2>
-                    <p>Nous sommes ravis de vous accueillir en tant qu'annonceur sur ChillNow.</p>
-                    <p>Votre compte annonceur vous permet de :</p>
-                    <ul>
-                        <li>Gérer vos établissements et événements</li>
-                        <li>Suivre vos réservations en temps réel</li>
-                        <li>Analyser vos ventes de tickets</li>
-                        <li>Personnaliser vos offres et tarifs</li>
-                    </ul>
-                    <p>Notre équipe est à votre disposition pour vous accompagner dans la gestion de vos annonces.</p>
-                    <p>À très bientôt sur ChillNow!</p>
-                    <p>L'équipe ChillNow</p>
-                """
-            else:
-                subject = "Bienvenue sur ChillNow!"
-                content = f"""
-                    <h2>Bienvenue sur ChillNow {first_name}!</h2>
-                    <p>Nous sommes ravis de vous compter parmi nous.</p>
-                    <p>Avec ChillNow, vous pouvez :</p>
-                    <ul>
-                        <li>Découvrir les meilleurs endroits pour sortir</li>
-                        <li>Réserver vos places en quelques clics</li>
-                        <li>Acheter vos tickets d'événements</li>
-                        <li>Profiter d'offres exclusives</li>
-                    </ul>
-                    <p>Si vous avez des questions, notre équipe est là pour vous aider.</p>
-                    <p>À très bientôt sur ChillNow!</p>
-                    <p>L'équipe ChillNow</p>
-                """
+            subject = "Bienvenue sur ChillNow!"
+            content = f"""
+                <h2 style="color: #000000;">Bienvenue sur ChillNow {first_name}!</h2>
+                <p>Nous sommes ravis de vous accueillir parmi nous.</p>
+                <p>Avec ChillNow, vous pouvez :</p>
+                <ul>
+                    <li>Découvrir les meilleurs endroits pour sortir</li>
+                    <li>Réserver vos places en quelques clics</li>
+                    <li>Acheter vos tickets d'événements</li>
+                    <li>Profiter d'offres exclusives</li>
+                </ul>
+                <p>Si vous avez des questions, notre équipe est là pour vous aider.</p>
+                <p>À très bientôt sur ChillNow!</p>
+                <p>L'équipe ChillNow</p>
+            """
 
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": user_email, "name": first_name}],
