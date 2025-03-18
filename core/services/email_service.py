@@ -1,6 +1,9 @@
 import sib_api_v3_sdk
 from django.conf import settings
 from sib_api_v3_sdk.rest import ApiException
+import logging
+
+logger = logging.getLogger(__name__)
 
 class EmailService:
     def __init__(self):
@@ -317,6 +320,7 @@ class EmailService:
 
     def send_announcement_status_update(self, advertiser_email, advertiser_name, announcement_details):
         try:
+            logger.info(f"Préparation de l'email de mise à jour de statut pour {advertiser_email}")
             status = announcement_details.get('status')
             if status == 'APPROVED':
                 subject = "Votre annonce a été validée"
@@ -338,16 +342,22 @@ class EmailService:
                 </div>
                 <p>{announcement_details.get('next_steps', '')}</p>
             """
+            logger.info("Configuration de l'email avec Brevo/Sendinblue")
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": advertiser_email, "name": advertiser_name}],
                 html_content=self._get_base_template(content),
                 sender=self.default_sender,
                 subject=subject
             )
+            logger.info("Envoi de l'email via l'API Brevo")
             self.api_instance.send_transac_email(send_smtp_email)
+            logger.info("Email envoyé avec succès")
             return True
         except ApiException as e:
-            print(f"Exception when sending announcement status update: {e}")
+            logger.error(f"Erreur API Brevo lors de l'envoi de l'email: {e}")
+            return False
+        except Exception as e:
+            logger.error(f"Erreur inattendue lors de l'envoi de l'email: {e}")
             return False
 
     def send_new_advertiser_notification(self, admin_email, advertiser_details):

@@ -274,6 +274,7 @@ class AnnonceDetail(generics.RetrieveUpdateDestroyAPIView):
         
         # Si le statut a changé, envoyer un email
         if old_status != instance.status:
+            logger.info(f"Le statut de l'annonce {instance.id} a changé de {old_status} à {instance.status}")
             email_service = EmailService()
             
             announcement_details = {
@@ -283,11 +284,19 @@ class AnnonceDetail(generics.RetrieveUpdateDestroyAPIView):
                 'next_steps': 'Vous pouvez maintenant la consulter sur la plateforme.' if instance.status == 'ACTIVE' else 'Veuillez contacter notre support pour plus d\'informations.'
             }
             
-            email_service.send_announcement_status_update(
-                advertiser_email=instance.utilisateur.email,
-                advertiser_name=f"{instance.utilisateur.first_name} {instance.utilisateur.last_name}",
-                announcement_details=announcement_details
-            )
+            try:
+                logger.info(f"Tentative d'envoi d'email à {instance.utilisateur.email}")
+                success = email_service.send_announcement_status_update(
+                    advertiser_email=instance.utilisateur.email,
+                    advertiser_name=f"{instance.utilisateur.first_name} {instance.utilisateur.last_name}",
+                    announcement_details=announcement_details
+                )
+                if success:
+                    logger.info("Email envoyé avec succès")
+                else:
+                    logger.error("Échec de l'envoi de l'email")
+            except Exception as e:
+                logger.error(f"Erreur lors de l'envoi de l'email: {str(e)}")
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
