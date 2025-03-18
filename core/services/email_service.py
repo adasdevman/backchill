@@ -474,4 +474,34 @@ class EmailService:
             return True
         except ApiException as e:
             print(f"Exception when sending password reset email: {e}")
+            return False
+
+    def send_announcement_creation_confirmation(self, user_email, user_name, announcement_details):
+        try:
+            subject = "Votre annonce a été créée avec succès"
+            content = f"""
+                <h2>Confirmation de création d'annonce</h2>
+                <p>Bonjour {user_name},</p>
+                <p>Votre annonce a été créée avec succès et est en cours de validation par notre équipe.</p>
+                <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3>Détails de l'annonce :</h3>
+                    <p><strong>Titre :</strong> {announcement_details.get('titre')}</p>
+                    <p><strong>Catégorie :</strong> {announcement_details.get('categorie')}</p>
+                    <p><strong>Sous-catégorie :</strong> {announcement_details.get('sous_categorie')}</p>
+                </div>
+                <p>Notre équipe va examiner votre annonce dans les plus brefs délais.</p>
+                <p>Vous recevrez une notification dès que votre annonce sera validée.</p>
+            """
+
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=[{"email": user_email, "name": user_name}],
+                html_content=self._get_base_template(content),
+                sender=self.default_sender,
+                subject=subject
+            )
+
+            self.api_instance.send_transac_email(send_smtp_email)
+            return True
+        except ApiException as e:
+            print(f"Exception when sending announcement creation confirmation: {e}")
             return False 

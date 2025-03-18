@@ -222,15 +222,34 @@ class AnnonceList(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        print("🔍 Données reçues:", request.data)  # Log des données reçues
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            print("✅ Données validées:", serializer.validated_data)  # Log des données validées
-            self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            print("❌ Erreurs de validation:", serializer.errors)  # Log des erreurs
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Créer l'annonce
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            instance = serializer.save()
+
+            # Envoyer l'email de confirmation
+            email_service = EmailService()
+            
+            announcement_details = {
+                'titre': instance.titre,
+                'categorie': instance.categorie.nom,
+                'sous_categorie': instance.sous_categorie.nom
+            }
+            
+            email_service.send_announcement_creation_confirmation(
+                user_email=request.user.email,
+                user_name=f"{request.user.first_name} {request.user.last_name}",
+                announcement_details=announcement_details
+            )
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     def perform_create(self, serializer):
         serializer.save(utilisateur=self.request.user)
