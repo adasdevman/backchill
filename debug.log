@@ -15803,3 +15803,16 @@ INFO 2025-03-18 10:28:16,127 autoreload 24644 21372 Watching for file changes wi
 INFO 2025-03-18 10:28:38,705 autoreload 24644 21372 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
 INFO 2025-03-18 10:28:41,063 autoreload 24940 5404 Watching for file changes with StatReloader
 INFO 2025-03-18 10:28:57,606 autoreload 24940 5404 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:28:59,630 autoreload 24848 19544 Watching for file changes with StatReloader
+INFO 2025-03-18 10:54:25,565 autoreload 24848 19544 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:54:27,521 autoreload 20804 22932 Watching for file changes with StatReloader
+INFO 2025-03-18 10:55:32,163 autoreload 20804 22932 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:55:34,255 autoreload 22308 20352 Watching for file changes with StatReloader
+INFO 2025-03-18 10:55:40,324 autoreload 22308 20352 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:55:42,219 autoreload 13100 10580 Watching for file changes with StatReloader
+INFO 2025-03-18 10:56:26,811 autoreload 13100 10580 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:56:28,704 autoreload 21692 22704 Watching for file changes with StatReloader
+INFO 2025-03-18 10:59:07,076 autoreload 21692 22704 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:59:09,268 autoreload 17636 2640 Watching for file changes with StatReloader
+INFO 2025-03-18 10:59:47,445 autoreload 17636 2640 C:\Users\Nevada Man\CascadeProjects\chillnow\chillnowback\core\services\email_service.py changed, reloading.
+INFO 2025-03-18 10:59:49,590 autoreload 12544 19956 Watching for file changes with StatReloader

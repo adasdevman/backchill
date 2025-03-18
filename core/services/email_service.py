@@ -84,6 +84,43 @@ class EmailService:
         </html>
         """
 
+    def _get_admin_emails(self):
+        """
+        Récupère la liste des emails des administrateurs.
+        Retourne une liste de dictionnaires avec email et nom.
+        """
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        admin_users = User.objects.filter(is_staff=True, is_active=True)
+        return [{"email": user.email, "name": user.get_full_name() or user.email} for user in admin_users]
+
+    def _send_to_admins(self, subject, content):
+        """
+        Envoie un email à tous les administrateurs actifs.
+        """
+        try:
+            admin_emails = self._get_admin_emails()
+            if not admin_emails:
+                logger.warning("Aucun administrateur trouvé pour l'envoi de l'email")
+                return False
+
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=admin_emails,
+                html_content=self._get_base_template(content),
+                sender=self.default_sender,
+                subject=subject
+            )
+            
+            self.api_instance.send_transac_email(send_smtp_email)
+            logger.info(f"Email envoyé avec succès à {len(admin_emails)} administrateurs")
+            return True
+        except ApiException as e:
+            logger.error(f"Erreur lors de l'envoi aux administrateurs: {e}")
+            return False
+        except Exception as e:
+            logger.error(f"Erreur inattendue lors de l'envoi aux administrateurs: {e}")
+            return False
+
     def send_welcome_email(self, user_email, first_name='', role='UTILISATEUR'):
         try:
             subject = "Bienvenue sur ChillNow!"
@@ -360,7 +397,7 @@ class EmailService:
             logger.error(f"Erreur inattendue lors de l'envoi de l'email: {e}")
             return False
 
-    def send_new_advertiser_notification(self, admin_email, advertiser_details):
+    def send_new_advertiser_notification(self, advertiser_details):
         try:
             subject = "Nouvelle inscription annonceur"
             content = f"""
@@ -375,19 +412,12 @@ class EmailService:
                 </div>
                 <p>Veuillez vérifier ces informations et valider le compte.</p>
             """
-            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-                to=[{"email": admin_email}],
-                html_content=self._get_base_template(content),
-                sender=self.default_sender,
-                subject=subject
-            )
-            self.api_instance.send_transac_email(send_smtp_email)
-            return True
-        except ApiException as e:
-            print(f"Exception when sending new advertiser notification: {e}")
+            return self._send_to_admins(subject, content)
+        except Exception as e:
+            logger.error(f"Exception when sending new advertiser notification: {e}")
             return False
 
-    def send_announcement_validation_request(self, admin_email, announcement_details):
+    def send_announcement_validation_request(self, announcement_details):
         try:
             subject = "Nouvelle annonce à valider"
             content = f"""
@@ -402,54 +432,106 @@ class EmailService:
                 </div>
                 <p>Veuillez examiner cette annonce et la valider ou la rejeter.</p>
             """
-            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-                to=[{"email": admin_email}],
-                html_content=self._get_base_template(content),
-                sender=self.default_sender,
-                subject=subject
-            )
-            self.api_instance.send_transac_email(send_smtp_email)
-            return True
-        except ApiException as e:
-            print(f"Exception when sending announcement validation request: {e}")
+            return self._send_to_admins(subject, content)
+        except Exception as e:
+            logger.error(f"Exception when sending announcement validation request: {e}")
             return False
 
-    def send_daily_activity_report(self, admin_email, report_data):
+    def send_daily_activity_report(self, report_data):
         try:
-            subject = "Rapport d'activité quotidien"
+            subject = "Rapport quotidien d'activité ChillNow"
             content = f"""
-                <h2>Rapport d'activité du {report_data.get('date')}</h2>
-                <div class="stats-container">
-                    <h3>Nouveaux utilisateurs</h3>
-                    <div class="stat-item">
-                        <p><strong>Clients :</strong> {report_data.get('new_users')}</p>
-                        <p><strong>Annonceurs :</strong> {report_data.get('new_advertisers')}</p>
-                    </div>
-
-                    <h3>Activité commerciale</h3>
-                    <div class="stat-item">
-                        <p><strong>Nouvelles réservations :</strong> {report_data.get('new_bookings')}</p>
-                        <p><strong>Tickets vendus :</strong> {report_data.get('tickets_sold')}</p>
-                        <p><strong>Chiffre d'affaires :</strong> {report_data.get('revenue')} FCFA</p>
-                    </div>
-
-                    <h3>Contenu</h3>
-                    <div class="stat-item">
-                        <p><strong>Nouvelles annonces :</strong> {report_data.get('new_announcements')}</p>
-                        <p><strong>Annonces en attente :</strong> {report_data.get('pending_announcements')}</p>
-                    </div>
+                <h2>Rapport quotidien d'activité</h2>
+                <p>Voici le résumé de l'activité du jour :</p>
+                <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3>Statistiques</h3>
+                    <ul>
+                        <li>Nouvelles inscriptions : {report_data.get('new_users', 0)}</li>
+                        <li>Nouvelles annonces : {report_data.get('new_announcements', 0)}</li>
+                        <li>Réservations : {report_data.get('bookings', 0)}</li>
+                        <li>Tickets vendus : {report_data.get('tickets_sold', 0)}</li>
+                        <li>Chiffre d'affaires : {report_data.get('revenue', 0)} FCFA</li>
+                    </ul>
                 </div>
             """
+            return self._send_to_admins(subject, content)
+        except Exception as e:
+            logger.error(f"Exception when sending daily activity report: {e}")
+            return False
+
+    def send_new_ticket_sale_notification(self, advertiser_email, advertiser_name, ticket_details):
+        try:
+            subject = "Nouvelle vente de ticket"
+            content = f"""
+                <h2>Nouvelle vente de ticket</h2>
+                <p>Bonjour {advertiser_name},</p>
+                <p>Un ticket vient d'être vendu pour votre événement :</p>
+                <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <p><strong>Événement :</strong> {ticket_details.get('event_title')}</p>
+                    <p><strong>Type de ticket :</strong> {ticket_details.get('ticket_type')}</p>
+                    <p><strong>Prix :</strong> {ticket_details.get('amount')} FCFA</p>
+                    <p><strong>Date de vente :</strong> {ticket_details.get('sale_date')}</p>
+                    <p><strong>Acheteur :</strong> {ticket_details.get('buyer_name')}</p>
+                </div>
+                <p>Vous pouvez consulter les détails de la vente dans votre espace annonceur.</p>
+            """
+            
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
-                to=[{"email": admin_email}],
+                to=[{"email": advertiser_email, "name": advertiser_name}],
                 html_content=self._get_base_template(content),
                 sender=self.default_sender,
                 subject=subject
             )
+            
             self.api_instance.send_transac_email(send_smtp_email)
             return True
         except ApiException as e:
-            print(f"Exception when sending daily activity report: {e}")
+            print(f"Exception when sending new ticket sale notification: {e}")
+            return False
+
+    def send_daily_ticket_sales_summary(self, advertiser_email, advertiser_name, sales_data):
+        try:
+            total_sales = sales_data.get('total_sales', 0)
+            total_revenue = sales_data.get('total_revenue', 0)
+            events = sales_data.get('events', [])
+
+            subject = "Récapitulatif des ventes de tickets"
+            content = f"""
+                <h2>Récapitulatif quotidien des ventes de tickets</h2>
+                <p>Bonjour {advertiser_name},</p>
+                <p>Voici le résumé des ventes de tickets pour la journée :</p>
+                <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3>Résumé global</h3>
+                    <p><strong>Total des ventes :</strong> {total_sales} tickets</p>
+                    <p><strong>Chiffre d'affaires total :</strong> {total_revenue} FCFA</p>
+                    
+                    <h3>Détails par événement</h3>
+                    {''.join([f'''
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <p><strong>Événement :</strong> {event.get('title')}</p>
+                            <p><strong>Tickets vendus :</strong> {event.get('tickets_sold')}</p>
+                            <p><strong>Chiffre d'affaires :</strong> {event.get('revenue')} FCFA</p>
+                            <p><strong>Types de tickets vendus :</strong></p>
+                            <ul>
+                                {''.join([f"<li>{ticket_type.get('name')}: {ticket_type.get('quantity')} ({ticket_type.get('revenue')} FCFA)</li>" for ticket_type in event.get('ticket_types', [])])}
+                            </ul>
+                        </div>
+                    ''' for event in events])}
+                </div>
+                <p>Pour plus de détails, consultez votre tableau de bord sur ChillNow.</p>
+            """
+            
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=[{"email": advertiser_email, "name": advertiser_name}],
+                html_content=self._get_base_template(content),
+                sender=self.default_sender,
+                subject=subject
+            )
+            
+            self.api_instance.send_transac_email(send_smtp_email)
+            return True
+        except ApiException as e:
+            print(f"Exception when sending daily ticket sales summary: {e}")
             return False
 
     def send_password_reset_email(self, user_email, user_name, reset_url):
@@ -514,4 +596,92 @@ class EmailService:
             return True
         except ApiException as e:
             print(f"Exception when sending announcement creation confirmation: {e}")
+            return False
+
+    def send_announcement_report_alert(self, report_details):
+        try:
+            subject = "Alerte : Signalement d'annonce"
+            content = f"""
+                <h2>Nouvelle alerte de signalement</h2>
+                <p>Une annonce a été signalée par un utilisateur :</p>
+                <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3>Détails du signalement</h3>
+                    <p><strong>Annonce :</strong> {report_details.get('announcement_title')}</p>
+                    <p><strong>Annonceur :</strong> {report_details.get('advertiser_name')}</p>
+                    <p><strong>Signalé par :</strong> {report_details.get('reporter_name')}</p>
+                    <p><strong>Motif :</strong> {report_details.get('reason')}</p>
+                    <p><strong>Description :</strong> {report_details.get('description')}</p>
+                    <p><strong>Date du signalement :</strong> {report_details.get('report_date')}</p>
+                </div>
+                <p>Veuillez examiner ce signalement et prendre les mesures nécessaires.</p>
+            """
+            return self._send_to_admins(subject, content)
+        except Exception as e:
+            logger.error(f"Exception when sending announcement report alert: {e}")
+            return False
+
+    def send_weekly_stats_report(self, stats_data):
+        try:
+            subject = "Rapport hebdomadaire des statistiques"
+            
+            # Calculer les variations par rapport à la semaine précédente
+            def calculate_variation(current, previous):
+                if previous == 0:
+                    return "N/A"
+                variation = ((current - previous) / previous) * 100
+                return f"{variation:+.1f}%" if variation != 0 else "0%"
+
+            content = f"""
+                <h2>Rapport hebdomadaire des statistiques</h2>
+                <p>Voici le résumé de l'activité de la semaine du {stats_data.get('start_date')} au {stats_data.get('end_date')} :</p>
+                
+                <div style="background-color: #f8f8f8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <h3>Utilisateurs</h3>
+                    <div style="margin-bottom: 15px;">
+                        <p><strong>Nouveaux utilisateurs :</strong> {stats_data.get('new_users')} 
+                           ({calculate_variation(stats_data.get('new_users'), stats_data.get('previous_new_users'))})</p>
+                        <p><strong>Nouveaux annonceurs :</strong> {stats_data.get('new_advertisers')} 
+                           ({calculate_variation(stats_data.get('new_advertisers'), stats_data.get('previous_new_advertisers'))})</p>
+                        <p><strong>Utilisateurs actifs :</strong> {stats_data.get('active_users')} 
+                           ({calculate_variation(stats_data.get('active_users'), stats_data.get('previous_active_users'))})</p>
+                    </div>
+
+                    <h3>Activité commerciale</h3>
+                    <div style="margin-bottom: 15px;">
+                        <p><strong>Chiffre d'affaires total :</strong> {stats_data.get('total_revenue')} FCFA 
+                           ({calculate_variation(stats_data.get('total_revenue'), stats_data.get('previous_total_revenue'))})</p>
+                        <p><strong>Nombre de réservations :</strong> {stats_data.get('total_bookings')} 
+                           ({calculate_variation(stats_data.get('total_bookings'), stats_data.get('previous_total_bookings'))})</p>
+                        <p><strong>Tickets vendus :</strong> {stats_data.get('tickets_sold')} 
+                           ({calculate_variation(stats_data.get('tickets_sold'), stats_data.get('previous_tickets_sold'))})</p>
+                    </div>
+
+                    <h3>Contenu</h3>
+                    <div style="margin-bottom: 15px;">
+                        <p><strong>Nouvelles annonces :</strong> {stats_data.get('new_announcements')} 
+                           ({calculate_variation(stats_data.get('new_announcements'), stats_data.get('previous_new_announcements'))})</p>
+                        <p><strong>Annonces actives :</strong> {stats_data.get('active_announcements')} 
+                           ({calculate_variation(stats_data.get('active_announcements'), stats_data.get('previous_active_announcements'))})</p>
+                        <p><strong>Signalements :</strong> {stats_data.get('reports')} 
+                           ({calculate_variation(stats_data.get('reports'), stats_data.get('previous_reports'))})</p>
+                    </div>
+
+                    <h3>Top 5 des établissements</h3>
+                    <div style="margin-bottom: 15px;">
+                        {''.join([f"<p>{i+1}. {establishment.get('name')} - {establishment.get('bookings')} réservations</p>" 
+                                for i, establishment in enumerate(stats_data.get('top_establishments', []))])}
+                    </div>
+
+                    <h3>Top 5 des événements</h3>
+                    <div style="margin-bottom: 15px;">
+                        {''.join([f"<p>{i+1}. {event.get('name')} - {event.get('tickets')} tickets vendus</p>" 
+                                for i, event in enumerate(stats_data.get('top_events', []))])}
+                    </div>
+                </div>
+
+                <p>Pour plus de détails et de statistiques, consultez le tableau de bord administrateur.</p>
+            """
+            return self._send_to_admins(subject, content)
+        except Exception as e:
+            logger.error(f"Exception when sending weekly stats report: {e}")
             return False 
