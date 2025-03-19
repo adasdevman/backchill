@@ -6,7 +6,7 @@ from .views import (
     create_payment, payment_history, CinetPayWebhookView,
     check_email, mes_annonces, mes_tickets, mes_chills,
     NotificationViewSet, upload_annonce_photo, received_bookings,
-    sold_tickets, delete_account_view, auth
+    sold_tickets, delete_account_view
 )
 
 app_name = 'api'
@@ -35,7 +35,6 @@ urlpatterns = [
     path('annonces/mes-annonces/', mes_annonces, name='mes-annonces'),
     path('annonces/mes-tickets/', mes_tickets, name='mes-tickets'),
     path('annonces/mes-chills/', mes_chills, name='mes-chills'),
-    path('auth/activate/<str:uidb64>/<str:token>/', auth.activate_account, name='activate_account'),
 ]
 
 # Then extend the urlpatterns with the router URLs
