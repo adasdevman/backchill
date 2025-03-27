@@ -30,6 +30,10 @@ DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['https://chillbackend.onrender.com', 'localhost', '127.0.0.1','chillbackend.onrender.com','*']  # En développement uniquement
 
+# Configuration fuseau horaire
+TIME_ZONE = 'UTC'  # Fuseau horaire standard
+USE_TZ = True      # Activer la gestion des fuseaux horaires
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
