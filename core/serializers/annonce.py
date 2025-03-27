@@ -6,6 +6,7 @@ from ..models import (
 from .base import TimeStampedModelSerializer
 from .categorie import CategorieSerializer, SousCategorieSerializer
 from users.serializers import UserProfileSerializer
+import datetime
 
 class HoraireSerializer(serializers.ModelSerializer):
     heure_ouverture = serializers.SerializerMethodField()
@@ -41,8 +42,18 @@ class AnnonceListSerializer(TimeStampedModelSerializer):
     tarifs = TarifSerializer(many=True, read_only=True)
     annonceur = UserProfileSerializer(source='utilisateur', read_only=True)
     status = serializers.CharField(read_only=True)
-    date_evenement = serializers.DateField(format='%Y-%m-%d', read_only=True)
-
+    date_evenement = serializers.SerializerMethodField()
+    
+    def get_date_evenement(self, obj):
+        """
+        Convertit explicitement une date ou un datetime en string au format YYYY-MM-DD
+        """
+        if obj.date_evenement is None:
+            return None
+        if isinstance(obj.date_evenement, datetime.datetime):
+            return obj.date_evenement.date().isoformat()
+        return obj.date_evenement.isoformat() if obj.date_evenement else None
+        
     class Meta:
         model = Annonce
         fields = [
@@ -66,10 +77,20 @@ class AnnonceSerializer(TimeStampedModelSerializer):
     titre = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
     localisation = serializers.CharField(required=True)
-    date_evenement = serializers.DateField(format='%Y-%m-%d', required=False, allow_null=True)
+    date_evenement = serializers.SerializerMethodField()
     est_actif = serializers.BooleanField(default=True)
     status = serializers.CharField(default='PENDING')
-
+    
+    def get_date_evenement(self, obj):
+        """
+        Convertit explicitement une date ou un datetime en string au format YYYY-MM-DD
+        """
+        if obj.date_evenement is None:
+            return None
+        if isinstance(obj.date_evenement, datetime.datetime):
+            return obj.date_evenement.date().isoformat()
+        return obj.date_evenement.isoformat() if obj.date_evenement else None
+        
     class Meta:
         model = Annonce
         fields = [
@@ -109,7 +130,18 @@ class AnnonceSerializer(TimeStampedModelSerializer):
         # Set default status if not provided
         if 'status' not in data:
             data['status'] = 'PENDING'
-
+            
+        # Traiter date_evenement manuellement
+        date_str = self.initial_data.get('date_evenement')
+        if date_str:
+            try:
+                # Assurer que c'est au format YYYY-MM-DD
+                if 'T' in date_str:  # Format ISO avec heure
+                    date_str = date_str.split('T')[0]
+                data['date_evenement'] = datetime.date.fromisoformat(date_str)
+            except (ValueError, TypeError):
+                raise serializers.ValidationError({'date_evenement': 'Format de date invalide. Utilisez YYYY-MM-DD.'})
+        
         return data
 
     def create(self, validated_data):
@@ -167,7 +199,17 @@ class AnnonceDetailSerializer(TimeStampedModelSerializer):
     photos = GaleriePhotoSerializer(many=True, read_only=True)
     annonceur = UserProfileSerializer(source='utilisateur', read_only=True)
     status = serializers.CharField(read_only=True)
-    date_evenement = serializers.DateField(format='%Y-%m-%d', read_only=True)
+    date_evenement = serializers.SerializerMethodField()
+    
+    def get_date_evenement(self, obj):
+        """
+        Convertit explicitement une date ou un datetime en string au format YYYY-MM-DD
+        """
+        if obj.date_evenement is None:
+            return None
+        if isinstance(obj.date_evenement, datetime.datetime):
+            return obj.date_evenement.date().isoformat()
+        return obj.date_evenement.isoformat() if obj.date_evenement else None
 
     class Meta:
         model = Annonce
