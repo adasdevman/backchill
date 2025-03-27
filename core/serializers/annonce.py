@@ -41,6 +41,7 @@ class AnnonceListSerializer(TimeStampedModelSerializer):
     tarifs = TarifSerializer(many=True, read_only=True)
     annonceur = UserProfileSerializer(source='utilisateur', read_only=True)
     status = serializers.CharField(read_only=True)
+    date_evenement = serializers.DateField(format='%Y-%m-%d', read_only=True)
 
     class Meta:
         model = Annonce
@@ -65,7 +66,7 @@ class AnnonceSerializer(TimeStampedModelSerializer):
     titre = serializers.CharField(required=True)
     description = serializers.CharField(required=True)
     localisation = serializers.CharField(required=True)
-    date_evenement = serializers.DateField(required=False, allow_null=True)
+    date_evenement = serializers.DateField(format='%Y-%m-%d', required=False, allow_null=True)
     est_actif = serializers.BooleanField(default=True)
     status = serializers.CharField(default='PENDING')
 
@@ -166,6 +167,7 @@ class AnnonceDetailSerializer(TimeStampedModelSerializer):
     photos = GaleriePhotoSerializer(many=True, read_only=True)
     annonceur = UserProfileSerializer(source='utilisateur', read_only=True)
     status = serializers.CharField(read_only=True)
+    date_evenement = serializers.DateField(format='%Y-%m-%d', read_only=True)
 
     class Meta:
         model = Annonce
