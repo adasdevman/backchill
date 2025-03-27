@@ -43,6 +43,7 @@ class AnnonceListSerializer(TimeStampedModelSerializer):
     annonceur = UserProfileSerializer(source='utilisateur', read_only=True)
     status = serializers.CharField(read_only=True)
     date_evenement = serializers.SerializerMethodField()
+    heure_evenement = serializers.SerializerMethodField()
     
     def get_date_evenement(self, obj):
         """
@@ -53,12 +54,22 @@ class AnnonceListSerializer(TimeStampedModelSerializer):
         if isinstance(obj.date_evenement, datetime.datetime):
             return obj.date_evenement.date().isoformat()
         return obj.date_evenement.isoformat() if obj.date_evenement else None
+    
+    def get_heure_evenement(self, obj):
+        """
+        Extrait l'heure si date_evenement est un datetime, sinon retourne None
+        """
+        if obj.date_evenement is None:
+            return None
+        if isinstance(obj.date_evenement, datetime.datetime):
+            return obj.date_evenement.strftime('%H:%M')
+        return None
         
     class Meta:
         model = Annonce
         fields = [
             'id', 'titre', 'description', 'localisation',
-            'date_evenement', 'est_actif', 'categorie',
+            'date_evenement', 'heure_evenement', 'est_actif', 'categorie',
             'sous_categorie', 'photos', 'categorie_nom',
             'sous_categorie_nom', 'horaires', 'tarifs',
             'created', 'modified', 'annonceur', 'status'
@@ -72,6 +83,7 @@ class AnnonceSerializer(TimeStampedModelSerializer):
     categorie = CategorieSerializer(read_only=True)
     sous_categorie = SousCategorieSerializer(read_only=True)
     deleted_images = serializers.ListField(child=serializers.CharField(), write_only=True, required=False)
+    heure_evenement = serializers.SerializerMethodField()
     
     # Explicitly declare all fields
     titre = serializers.CharField(required=True)
@@ -90,12 +102,22 @@ class AnnonceSerializer(TimeStampedModelSerializer):
         if isinstance(obj.date_evenement, datetime.datetime):
             return obj.date_evenement.date().isoformat()
         return obj.date_evenement.isoformat() if obj.date_evenement else None
+    
+    def get_heure_evenement(self, obj):
+        """
+        Extrait l'heure si date_evenement est un datetime, sinon retourne None
+        """
+        if obj.date_evenement is None:
+            return None
+        if isinstance(obj.date_evenement, datetime.datetime):
+            return obj.date_evenement.strftime('%H:%M')
+        return None
         
     class Meta:
         model = Annonce
         fields = [
             'id', 'titre', 'description', 'localisation',
-            'date_evenement', 'est_actif', 'categorie_id',
+            'date_evenement', 'heure_evenement', 'est_actif', 'categorie_id',
             'sous_categorie_id', 'categorie', 'sous_categorie',
             'photos', 'horaires', 'tarifs', 'annonceur',
             'created', 'modified', 'status', 'deleted_images'
@@ -131,14 +153,34 @@ class AnnonceSerializer(TimeStampedModelSerializer):
         if 'status' not in data:
             data['status'] = 'PENDING'
             
-        # Traiter date_evenement manuellement
+        # Traiter date_evenement et heure_evenement manuellement
         date_str = self.initial_data.get('date_evenement')
+        heure_str = self.initial_data.get('heure_evenement')
+        
         if date_str:
             try:
                 # Assurer que c'est au format YYYY-MM-DD
                 if 'T' in date_str:  # Format ISO avec heure
                     date_str = date_str.split('T')[0]
-                data['date_evenement'] = datetime.date.fromisoformat(date_str)
+                
+                # Si nous avons à la fois une date et une heure, combinons-les
+                if categorie.nom.upper() == 'EVENT' and heure_str:
+                    try:
+                        date_obj = datetime.date.fromisoformat(date_str)
+                        time_parts = heure_str.split(':')
+                        hours = int(time_parts[0])
+                        minutes = int(time_parts[1]) if len(time_parts) > 1 else 0
+                        
+                        # Combiner date et heure en un datetime
+                        data['date_evenement'] = datetime.datetime.combine(
+                            date_obj, 
+                            datetime.time(hours, minutes)
+                        )
+                    except (ValueError, TypeError):
+                        raise serializers.ValidationError({'heure_evenement': 'Format d\'heure invalide. Utilisez HH:MM.'})
+                else:
+                    # Pour les autres types, gardez uniquement la date
+                    data['date_evenement'] = datetime.date.fromisoformat(date_str)
             except (ValueError, TypeError):
                 raise serializers.ValidationError({'date_evenement': 'Format de date invalide. Utilisez YYYY-MM-DD.'})
         
@@ -200,6 +242,7 @@ class AnnonceDetailSerializer(TimeStampedModelSerializer):
     annonceur = UserProfileSerializer(source='utilisateur', read_only=True)
     status = serializers.CharField(read_only=True)
     date_evenement = serializers.SerializerMethodField()
+    heure_evenement = serializers.SerializerMethodField()
     
     def get_date_evenement(self, obj):
         """
@@ -210,13 +253,23 @@ class AnnonceDetailSerializer(TimeStampedModelSerializer):
         if isinstance(obj.date_evenement, datetime.datetime):
             return obj.date_evenement.date().isoformat()
         return obj.date_evenement.isoformat() if obj.date_evenement else None
+    
+    def get_heure_evenement(self, obj):
+        """
+        Extrait l'heure si date_evenement est un datetime, sinon retourne None
+        """
+        if obj.date_evenement is None:
+            return None
+        if isinstance(obj.date_evenement, datetime.datetime):
+            return obj.date_evenement.strftime('%H:%M')
+        return None
 
     class Meta:
         model = Annonce
         fields = [
             'id', 'utilisateur', 'categorie', 'sous_categorie',
             'titre', 'description', 'localisation', 'date_evenement',
-            'est_actif', 'horaires', 'tarifs', 'photos',
+            'heure_evenement', 'est_actif', 'horaires', 'tarifs', 'photos',
             'created', 'modified', 'annonceur', 'status'
         ]
         read_only_fields = ['utilisateur']
