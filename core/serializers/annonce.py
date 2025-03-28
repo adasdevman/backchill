@@ -23,6 +23,9 @@ class HoraireSerializer(serializers.ModelSerializer):
         return obj.heure_fermeture.strftime('%H:%M')
 
 class TarifSerializer(serializers.ModelSerializer):
+    # Définir explicitement le champ prix pour le convertir correctement
+    prix = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
+    
     class Meta:
         model = Tarif
         fields = ['id', 'nom', 'prix']
@@ -206,11 +209,28 @@ class AnnonceSerializer(TimeStampedModelSerializer):
         # Handle tarifs if present in the initial data
         tarifs_data = self.initial_data.get('tarifs', [])
         for tarif_data in tarifs_data:
-            Tarif.objects.create(
-                annonce=instance,
-                nom=tarif_data['nom'],
-                prix=tarif_data['prix']
-            )
+            try:
+                # Convertir explicitement la chaîne en décimal
+                prix_str = tarif_data['prix']
+                # Remplacer les virgules par des points si présentes
+                prix_str = prix_str.replace(',', '.')
+                prix_decimal = float(prix_str)
+                
+                Tarif.objects.create(
+                    annonce=instance,
+                    nom=tarif_data['nom'],
+                    prix=prix_decimal
+                )
+            except (ValueError, TypeError) as e:
+                print(f"Erreur lors de la conversion du prix '{tarif_data.get('prix')}': {str(e)}")
+                # Utiliser une valeur par défaut en cas d'erreur
+                Tarif.objects.create(
+                    annonce=instance,
+                    nom=tarif_data['nom'],
+                    prix=0.0
+                )
+            except Exception as e:
+                print(f"Erreur inattendue lors de la création du tarif: {str(e)}")
         
         return instance
 
@@ -228,6 +248,52 @@ class AnnonceSerializer(TimeStampedModelSerializer):
                 except Exception as e:
                     print(f"Erreur lors de la suppression de l'image {image_url}: {str(e)}")
                     continue
+
+        # Gérer les tarifs s'ils sont présents dans les données
+        tarifs_data = self.initial_data.get('tarifs', [])
+        if tarifs_data:
+            # Supprimer les tarifs existants
+            instance.tarifs.all().delete()
+            
+            # Créer les nouveaux tarifs avec conversion explicite de prix
+            for tarif_data in tarifs_data:
+                try:
+                    # Convertir explicitement la chaîne en décimal
+                    prix_str = tarif_data['prix']
+                    # Remplacer les virgules par des points si présentes
+                    prix_str = prix_str.replace(',', '.')
+                    prix_decimal = float(prix_str)
+                    
+                    Tarif.objects.create(
+                        annonce=instance,
+                        nom=tarif_data['nom'],
+                        prix=prix_decimal
+                    )
+                except (ValueError, TypeError) as e:
+                    print(f"Erreur lors de la conversion du prix '{tarif_data.get('prix')}': {str(e)}")
+                    # Utiliser une valeur par défaut en cas d'erreur
+                    Tarif.objects.create(
+                        annonce=instance,
+                        nom=tarif_data['nom'],
+                        prix=0.0
+                    )
+                except Exception as e:
+                    print(f"Erreur inattendue lors de la création du tarif: {str(e)}")
+                
+        # Gérer les horaires s'ils sont présents dans les données
+        horaires_data = self.initial_data.get('horaires', [])
+        if horaires_data:
+            # Supprimer les horaires existants
+            instance.horaire_set.all().delete()
+            
+            # Créer les nouveaux horaires
+            for horaire_data in horaires_data:
+                Horaire.objects.create(
+                    annonce=instance,
+                    jour=horaire_data['jour'],
+                    heure_ouverture=horaire_data['heure_ouverture'],
+                    heure_fermeture=horaire_data['heure_fermeture']
+                )
 
         # Mettre à jour les autres champs
         instance = super().update(instance, validated_data)
