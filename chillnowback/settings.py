@@ -183,24 +183,29 @@ REST_FRAMEWORK = {
     ),
 }
 
-# Configuration JWT plus détaillée
+# Configuration JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Durée de vie du token d'accès
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Durée de vie du token de rafraîchissement (1 mois)
+    'ROTATE_REFRESH_TOKENS': True,  # Générer un nouveau refresh token à chaque utilisation
+    'BLACKLIST_AFTER_ROTATION': True,  # Blacklister l'ancien refresh token
+    'UPDATE_LAST_LOGIN': True,  # Mettre à jour le champ last_login
     
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
-
+    
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
+    
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    
+    'JTI_CLAIM': 'jti',
 }
 
 # Configuration CORS
@@ -273,3 +278,7 @@ CLOUDINARY_STORAGE = {
 
 # Configuration des médias avec Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Configuration Facebook
+FACEBOOK_APP_ID = '1220457469712501'
+FACEBOOK_APP_SECRET = 'd81db202da5ea8164f176c8a5c7e6f2a'

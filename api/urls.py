@@ -6,8 +6,9 @@ from .views import (
     create_payment, payment_history, CinetPayWebhookView,
     check_email, mes_annonces, mes_tickets, mes_chills,
     NotificationViewSet, upload_annonce_photo, received_bookings,
-    sold_tickets, delete_account_view
+    sold_tickets, delete_account_view, FacebookDataDeletionView
 )
+from rest_framework_simplejwt.views import TokenRefreshView
 
 app_name = 'api'
 
@@ -35,6 +36,8 @@ urlpatterns = [
     path('annonces/mes-annonces/', mes_annonces, name='mes-annonces'),
     path('annonces/mes-tickets/', mes_tickets, name='mes-tickets'),
     path('annonces/mes-chills/', mes_chills, name='mes-chills'),
+    path('facebook/data-deletion/', FacebookDataDeletionView.as_view(), name='facebook-data-deletion'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 # Then extend the urlpatterns with the router URLs

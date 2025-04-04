@@ -757,3 +757,93 @@ def delete_account_view(request):
             {'error': 'Une erreur est survenue lors de la suppression du compte'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FacebookDataDeletionView(APIView):
+    permission_classes = []
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            signed_request = request.data.get('signed_request')
+            if not signed_request:
+                return Response({'error': 'No signed_request parameter found'}, status=400)
+                
+            # Fonction pour parser la requête signée
+            def parse_signed_request(signed_request):
+                encoded_sig, payload = signed_request.split('.', 1)
+                
+                # Décoder la signature et les données
+                from django.conf import settings
+                import base64
+                import hmac
+                import hashlib
+                import json
+                
+                # Remplacer les caractères spéciaux
+                def base64_url_decode(inp):
+                    padding_factor = (4 - len(inp) % 4) % 4
+                    inp += "=" * padding_factor
+                    return base64.b64decode(inp.translate(str.maketrans('-_', '+/')))
+                
+                # Décoder les données
+                sig = base64_url_decode(encoded_sig)
+                data = json.loads(base64_url_decode(payload).decode('utf-8'))
+                
+                # Vérifier la signature
+                expected_sig = hmac.new(
+                    settings.FACEBOOK_APP_SECRET.encode('utf-8'),
+                    payload.encode('utf-8'),
+                    hashlib.sha256
+                ).digest()
+                
+                if sig != expected_sig:
+                    return None
+                
+                return data
+            
+            # Parser la requête signée
+            data = parse_signed_request(signed_request)
+            if not data:
+                return Response({'error': 'Invalid signed request'}, status=400)
+            
+            user_id = data.get('user_id')
+            if not user_id:
+                return Response({'error': 'No user_id found in signed_request'}, status=400)
+            
+            # Trouver l'utilisateur avec cet ID Facebook et marquer ses données pour suppression
+            # Vous devrez adapter cette partie selon votre modèle de données
+            try:
+                # Supposons que vous stockez l'ID Facebook dans un champ facebook_id
+                user = User.objects.get(facebook_id=user_id)
+                
+                # Marquer l'utilisateur pour suppression ou supprimer immédiatement
+                # Par exemple, désactiver le compte
+                user.is_active = False
+                user.email = f"deleted_{user.email}"  # Pour permettre la réutilisation de l'email
+                user.save()
+                
+                # Vous pourriez également créer une tâche asynchrone pour supprimer complètement les données
+                
+            except User.DoesNotExist:
+                # L'utilisateur n'existe pas, rien à faire
+                pass
+            
+            # Générer un code de confirmation
+            import uuid
+            confirmation_code = str(uuid.uuid4())[:8]
+            
+            # URL où l'utilisateur peut vérifier l'état de sa demande
+            status_url = f"https://chillnow.app/deletion-status?code={confirmation_code}"
+            
+            # Répondre avec l'URL et le code de confirmation
+            return Response({
+                'url': status_url,
+                'confirmation_code': confirmation_code
+            })
+            
+        except Exception as e:
+            logger.error(f"Error processing Facebook data deletion request: {str(e)}")
+            return Response(
+                {'error': 'Internal server error'}, 
+                status=500
+            )
