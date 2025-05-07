@@ -9,6 +9,8 @@ from .views import (
     sold_tickets, delete_account_view, FacebookDataDeletionView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
+from .auth.apple import AppleAuthView
+from .auth.google import GoogleAuthView
 
 app_name = 'api'
 
@@ -38,6 +40,8 @@ urlpatterns = [
     path('annonces/mes-chills/', mes_chills, name='mes-chills'),
     path('facebook/data-deletion/', FacebookDataDeletionView.as_view(), name='facebook-data-deletion'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/apple', AppleAuthView.as_view(), name='apple_auth'),
+    path('auth/google', GoogleAuthView.as_view(), name='google_auth'),
 ]
 
 # Then extend the urlpatterns with the router URLs
