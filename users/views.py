@@ -1,12 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 from django.db import IntegrityError
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserProfileSerializer
 from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
@@ -14,6 +14,10 @@ from core.services.email_service import EmailService
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from rest_framework.authtoken.models import Token
+import requests
+
+User = get_user_model()
 
 class LoginView(APIView):
     permission_classes = []  # Permettre l'accès sans authentification
@@ -160,3 +164,74 @@ class CustomPasswordResetView(PasswordResetView):
             )
         
         return super().form_valid(form)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def social_login(request):
+    """
+    Gère l'authentification via les réseaux sociaux (Google, Apple, Facebook)
+    en utilisant les tokens Clerk
+    """
+    provider = request.data.get('provider')
+    token = request.data.get('token')
+    
+    if not provider or not token:
+        return Response(
+            {'error': 'Provider and token are required'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        # Vérifier le token avec Clerk
+        clerk_response = requests.get(
+            'https://api.clerk.dev/v1/me',
+            headers={
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+        )
+        
+        if clerk_response.status_code != 200:
+            return Response(
+                {'error': 'Invalid token'}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        user_data = clerk_response.json()
+        email = user_data.get('email_addresses', [{}])[0].get('email_address')
+        
+        if not email:
+            return Response(
+                {'error': 'No email found in token'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Chercher ou créer l'utilisateur
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Créer un nouvel utilisateur
+            user = User.objects.create_user(
+                email=email,
+                username=email,
+                password=None  # Pas de mot de passe pour les utilisateurs sociaux
+            )
+        
+        # Générer ou récupérer le token d'authentification
+        token, created = Token.objects.get_or_create(user=user)
+        
+        return Response({
+            'token': token.key,
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username,
+                # Ajoutez d'autres champs utilisateur si nécessaire
+            }
+        })
+        
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

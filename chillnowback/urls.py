@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include('core.urls')),
     path('api/', include('api.urls')),  # Ajout du préfixe api/
+    path('', include('users.urls')),  # Assurez-vous que cette ligne existe
 ] 
 
 # Servir les fichiers media en développement
