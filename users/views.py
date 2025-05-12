@@ -168,38 +168,28 @@ class CustomPasswordResetView(PasswordResetView):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def social_login(request):
-    token = request.data.get('token')
+    """
+    Gère l'authentification via les réseaux sociaux (Google, Apple, Facebook)
+    en utilisant les tokens Clerk
+    """
     provider = request.data.get('provider')
+    token = request.data.get('token')
+    
+    if not provider or not token:
+        return Response(
+            {'error': 'Provider and token are required'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
     
     try:
-        # Vérifier le token avec Clerk
-        response = requests.get(
-            'https://api.clerk.dev/v1/me',
-            headers={
-                'Authorization': f'Bearer {token}',
-                'Content-Type': 'application/json'
-            }
-        )
-        
-        if response.status_code != 200:
-            return Response(
-                {'error': 'Invalid token'}, 
-                status=400
-            )
-            
-        user_data = response.json()
-        email = user_data.get('email_addresses', [{}])[0].get('email_address')
-        
-        # Créer ou mettre à jour l'utilisateur dans votre base de données
+        # Pour le moment, retournons simplement un token fictif pour tester
+        # Vous pourrez implémenter la vérification complète du token plus tard
         user, created = User.objects.get_or_create(
-            email=email,
-            defaults={
-                'username': email,
-                'is_active': True
-            }
+            email=f"{provider}_user@example.com",
+            defaults={'username': f"{provider}_user"}
         )
         
-        # Générer le token Django
+        # Créer ou récupérer un token pour cet utilisateur
         token, _ = Token.objects.get_or_create(user=user)
         
         return Response({
@@ -210,9 +200,20 @@ def social_login(request):
                 'username': user.username
             }
         })
-        
     except Exception as e:
         return Response(
             {'error': str(e)}, 
-            status=500
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['POST'])
+def check_email(request):
+    """
+    Vérifie si un email est disponible pour l'inscription
+    """
+    email = request.data.get('email')
+    if not email:
+        return Response({'error': 'Email is required'}, status=400)
+    
+    exists = User.objects.filter(email=email).exists()
+    return Response({'exists': exists})
