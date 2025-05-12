@@ -335,23 +335,105 @@ def social_login(request):
                 password=User.objects.make_random_password()
             )
         
-        # Créer ou récupérer un token pour cet utilisateur
-        token, _ = Token.objects.get_or_create(user=user)
+        # Utiliser uniquement le refresh token JWT 
+        refresh = RefreshToken.for_user(user)
+        logger.info(f"Refresh token JWT créé pour {user.email}")
         
-        return Response({
-            'token': token.key,
+        response_data = {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
             'user': {
                 'id': user.id,
                 'email': user.email,
                 'nom': user.last_name,
-                'prenoms': user.first_name
+                'prenoms': user.first_name,
+                'auth_source': 'clerk',
+                'clerk_user_id': user_id
             }
-        })
+        }
+        
+        logger.info(f"Synchronisation réussie pour {user.email}")
+        return Response(response_data)
+    
     except Exception as e:
+        logger.exception(f"Exception non gérée dans sync_clerk_user: {str(e)}")
         return Response(
             {'error': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def check_clerk_config(request):
+    """
+    Endpoint de diagnostic pour vérifier la configuration Clerk
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Vérifier la clé API
+        clerk_secret_key = os.environ.get('CLERK_SECRET_KEY')
+        has_secret_key = bool(clerk_secret_key)
+        
+        # Ne pas exposer la clé complète pour des raisons de sécurité
+        masked_key = None
+        if clerk_secret_key:
+            masked_key = f"sk_****{clerk_secret_key[-4:]}" if len(clerk_secret_key) > 8 else "présente mais trop courte"
+        
+        # Essayer d'appeler l'API Clerk pour vérifier si la clé fonctionne
+        api_works = False
+        api_error = None
+        
+        if clerk_secret_key:
+            try:
+                # Test simple: liste des utilisateurs (max 1)
+                response = requests.get(
+                    'https://api.clerk.dev/v1/users?limit=1',
+                    headers={
+                        'Authorization': f'Bearer {clerk_secret_key}',
+                        'Content-Type': 'application/json'
+                    }
+                )
+                
+                api_works = response.status_code == 200
+                
+                if not api_works:
+                    # Afficher plus de détails sur l'erreur
+                    api_error = f"Code: {response.status_code}, Réponse: {response.text}"
+                    logger.error(f"Test de l'API Clerk échoué: {api_error}")
+                    
+                    # Tester si une méthode POST fonctionnerait mieux (pour le diagnostic)
+                    try:
+                        test_post = requests.post(
+                            'https://api.clerk.dev/v1/users?limit=1',
+                            headers={
+                                'Authorization': f'Bearer {clerk_secret_key}',
+                                'Content-Type': 'application/json'
+                            },
+                            json={}
+                        )
+                        if test_post.status_code == 200:
+                            api_error += " [POST fonctionne mais pas GET]"
+                            logger.info("La méthode POST fonctionne pour l'API")
+                    except Exception as post_e:
+                        logger.error(f"Test POST a également échoué: {str(post_e)}")
+            except Exception as e:
+                api_error = str(e)
+                logger.exception(f"Exception lors du test de l'API Clerk: {api_error}")
+        
+        return Response({
+            'has_secret_key': has_secret_key,
+            'masked_key': masked_key,
+            'api_works': api_works,
+            'api_error': api_error,
+            'python_version': platform.python_version(),
+            'environment': os.environ.get('DJANGO_SETTINGS_MODULE', 'inconnu')
+        })
+    except Exception as e:
+        logger.exception(f"Exception dans check_clerk_config: {str(e)}")
+        return Response({
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def check_email(request):
@@ -612,18 +694,13 @@ def sync_clerk_user(request):
             
             logger.info(f"Profil {'créé' if created else 'mis à jour'} pour le nouvel utilisateur {user.email}")
         
-        # Créer ou récupérer un token pour cet utilisateur
-        token, _ = Token.objects.get_or_create(user=user)
-        logger.info(f"Token récupéré/créé pour {user.email}")
-        
-        # Récupérer ou créer un refresh token JWT si nous utilisons JWT
+        # Utiliser uniquement le refresh token JWT au lieu du token legacy
         refresh = RefreshToken.for_user(user)
         logger.info(f"Refresh token JWT créé pour {user.email}")
         
         response_data = {
             'access': str(refresh.access_token),
             'refresh': str(refresh),
-            'token': token.key,  # Token legacy pour compatibilité
             'user': {
                 'id': user.id,
                 'email': user.email,
@@ -643,76 +720,3 @@ def sync_clerk_user(request):
             {'error': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def check_clerk_config(request):
-    """
-    Endpoint de diagnostic pour vérifier la configuration Clerk
-    """
-    logger = logging.getLogger(__name__)
-    
-    try:
-        # Vérifier la clé API
-        clerk_secret_key = os.environ.get('CLERK_SECRET_KEY')
-        has_secret_key = bool(clerk_secret_key)
-        
-        # Ne pas exposer la clé complète pour des raisons de sécurité
-        masked_key = None
-        if clerk_secret_key:
-            masked_key = f"sk_****{clerk_secret_key[-4:]}" if len(clerk_secret_key) > 8 else "présente mais trop courte"
-        
-        # Essayer d'appeler l'API Clerk pour vérifier si la clé fonctionne
-        api_works = False
-        api_error = None
-        
-        if clerk_secret_key:
-            try:
-                # Test simple: liste des utilisateurs (max 1)
-                response = requests.get(
-                    'https://api.clerk.dev/v1/users?limit=1',
-                    headers={
-                        'Authorization': f'Bearer {clerk_secret_key}',
-                        'Content-Type': 'application/json'
-                    }
-                )
-                
-                api_works = response.status_code == 200
-                
-                if not api_works:
-                    # Afficher plus de détails sur l'erreur
-                    api_error = f"Code: {response.status_code}, Réponse: {response.text}"
-                    logger.error(f"Test de l'API Clerk échoué: {api_error}")
-                    
-                    # Tester si une méthode POST fonctionnerait mieux (pour le diagnostic)
-                    try:
-                        test_post = requests.post(
-                            'https://api.clerk.dev/v1/users?limit=1',
-                            headers={
-                                'Authorization': f'Bearer {clerk_secret_key}',
-                                'Content-Type': 'application/json'
-                            },
-                            json={}
-                        )
-                        if test_post.status_code == 200:
-                            api_error += " [POST fonctionne mais pas GET]"
-                            logger.info("La méthode POST fonctionne pour l'API")
-                    except Exception as post_e:
-                        logger.error(f"Test POST a également échoué: {str(post_e)}")
-            except Exception as e:
-                api_error = str(e)
-                logger.exception(f"Exception lors du test de l'API Clerk: {api_error}")
-        
-        return Response({
-            'has_secret_key': has_secret_key,
-            'masked_key': masked_key,
-            'api_works': api_works,
-            'api_error': api_error,
-            'python_version': platform.python_version(),
-            'environment': os.environ.get('DJANGO_SETTINGS_MODULE', 'inconnu')
-        })
-    except Exception as e:
-        logger.exception(f"Exception dans check_clerk_config: {str(e)}")
-        return Response({
-            'error': str(e)
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
