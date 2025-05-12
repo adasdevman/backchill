@@ -20,8 +20,23 @@ import os
 import json
 import logging
 import platform
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from dotenv import load_dotenv
 
 User = get_user_model()
+
+# Charger les variables d'environnement
+load_dotenv()
+
+# Configurer Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', 'chillnow'),
+    api_key=os.getenv('CLOUDINARY_API_KEY', '335635262922828'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET', ''),
+    secure=True
+)
 
 class LoginView(APIView):
     permission_classes = []  # Permettre l'accès sans authentification
@@ -733,3 +748,61 @@ def sync_clerk_user(request):
             {'error': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+class CloudinaryUploadView(APIView):
+    """
+    Vue pour uploader des fichiers vers Cloudinary
+    """
+    # Temporairement désactiver l'authentification pour les tests
+    # permission_classes = [IsAuthenticated]
+    permission_classes = []
+
+    def post(self, request, format=None):
+        try:
+            file = request.FILES.get('file')
+            resource_type = request.POST.get('resource_type', 'auto')
+            
+            if not file:
+                return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Valider le type de ressource
+            if resource_type not in ['image', 'video', 'auto']:
+                return Response({'error': 'Invalid resource type'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            logger.info(f"Uploading file to Cloudinary: {file.name}, type: {resource_type}")
+            
+            # Uploader le fichier à Cloudinary
+            upload_result = cloudinary.uploader.upload(
+                file,
+                resource_type=resource_type,
+                folder="chillnow",
+                use_filename=True,
+                unique_filename=True,
+            )
+            
+            logger.info(f"Cloudinary upload result: {upload_result}")
+            
+            # Générer une URL de miniature pour les vidéos
+            thumbnail_url = None
+            if resource_type == 'video' and 'public_id' in upload_result:
+                thumbnail_url = cloudinary.CloudinaryImage(upload_result['public_id']).build_url(
+                    format='jpg',
+                    resource_type='video',
+                    transformation=[
+                        {'width': 400, 'height': 300, 'crop': 'fill'}
+                    ]
+                )
+            
+            response_data = {
+                'public_id': upload_result.get('public_id'),
+                'secure_url': upload_result.get('secure_url'),
+                'format': upload_result.get('format'),
+                'resource_type': upload_result.get('resource_type'),
+                'thumbnail_url': thumbnail_url
+            }
+            
+            return Response(response_data, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Error uploading to Cloudinary: {str(e)}")
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
