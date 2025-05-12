@@ -410,9 +410,10 @@ def sync_clerk_user(request):
                 logger.info(f"URL d'appel: {url}")
                 logger.info(f"Headers: Authorization: Bearer sk_****{clerk_secret_key[-4:]}")
                 
-                clerk_response = requests.get(
+                clerk_response = requests.post(
                     url,
-                    headers=headers
+                    headers=headers,
+                    json={}  # Corps vide de la requête POST
                 )
                 
                 logger.info(f"Code de statut de la réponse Clerk: {clerk_response.status_code}")
@@ -471,6 +472,7 @@ def sync_clerk_user(request):
         try:
             logger.info(f"Récupération des détails utilisateur depuis Clerk pour user_id: {user_id}")
             
+            # Vérifier si on doit utiliser GET ou POST
             user_response = requests.get(
                 f'https://api.clerk.dev/v1/users/{user_id}',
                 headers={
