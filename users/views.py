@@ -320,16 +320,18 @@ def social_login(request):
             user = User.objects.get(email=primary_email)
         except User.DoesNotExist:
             # Créer un nouvel utilisateur
+            logger.info(f"Création d'un nouvel utilisateur avec email: {primary_email}")
             first_name = user_data.get('first_name', '')
             last_name = user_data.get('last_name', '')
-            username = primary_email  # Utiliser l'email comme nom d'utilisateur
             
+            # La méthode create_user attend l'email comme premier argument
+            # et génère le username automatiquement
             user = User.objects.create_user(
-                username=username,
                 email=primary_email,
                 first_name=first_name,
                 last_name=last_name,
-                # Ne pas définir de mot de passe car l'utilisateur s'authentifie via OAuth
+                # Définir un mot de passe aléatoire pour la sécurité
+                password=User.objects.make_random_password()
             )
         
         # Créer ou récupérer un token pour cet utilisateur
@@ -567,10 +569,10 @@ def sync_clerk_user(request):
             logger.info(f"Création d'un nouvel utilisateur avec email: {primary_email}")
             first_name = user_data.get('first_name', '')
             last_name = user_data.get('last_name', '')
-            username = primary_email  # Utiliser l'email comme nom d'utilisateur
             
+            # La méthode create_user attend l'email comme premier argument
+            # et génère le username automatiquement
             user = User.objects.create_user(
-                username=username,
                 email=primary_email,
                 first_name=first_name,
                 last_name=last_name,
@@ -657,8 +659,25 @@ def check_clerk_config(request):
                 api_works = response.status_code == 200
                 
                 if not api_works:
+                    # Afficher plus de détails sur l'erreur
                     api_error = f"Code: {response.status_code}, Réponse: {response.text}"
                     logger.error(f"Test de l'API Clerk échoué: {api_error}")
+                    
+                    # Tester si une méthode POST fonctionnerait mieux (pour le diagnostic)
+                    try:
+                        test_post = requests.post(
+                            'https://api.clerk.dev/v1/users?limit=1',
+                            headers={
+                                'Authorization': f'Bearer {clerk_secret_key}',
+                                'Content-Type': 'application/json'
+                            },
+                            json={}
+                        )
+                        if test_post.status_code == 200:
+                            api_error += " [POST fonctionne mais pas GET]"
+                            logger.info("La méthode POST fonctionne pour l'API")
+                    except Exception as post_e:
+                        logger.error(f"Test POST a également échoué: {str(post_e)}")
             except Exception as e:
                 api_error = str(e)
                 logger.exception(f"Exception lors du test de l'API Clerk: {api_error}")
