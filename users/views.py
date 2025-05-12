@@ -18,6 +18,8 @@ from rest_framework.authtoken.models import Token
 import requests
 import os
 import json
+import logging
+import platform
 
 User = get_user_model()
 
@@ -370,7 +372,12 @@ def sync_clerk_user(request):
     jwt_token = request.data.get('jwt')
     session_id = request.data.get('session_id')
     
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"Début de sync_clerk_user avec session_id: {session_id and session_id[:10]}...")
+    
     if not (jwt_token or session_id):
+        logger.error("Erreur: ni jwt ni session_id fourni")
         return Response(
             {'error': 'Either jwt or session_id is required'}, 
             status=status.HTTP_400_BAD_REQUEST
@@ -381,72 +388,116 @@ def sync_clerk_user(request):
         clerk_secret_key = os.environ.get('CLERK_SECRET_KEY')
         
         if not clerk_secret_key:
+            logger.error("Erreur: CLERK_SECRET_KEY manquante dans les variables d'environnement")
             return Response(
                 {'error': 'CLERK_SECRET_KEY is not configured on the server'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
+        logger.info("Clé API Clerk trouvée, longueur: " + str(len(clerk_secret_key)))
+        
         # Si nous avons un session_id, obtenons d'abord le JWT
         if session_id and not jwt_token:
-            clerk_response = requests.get(
-                f'https://api.clerk.dev/v1/sessions/{session_id}/tokens',
-                headers={
+            try:
+                logger.info(f"Tentative d'échange du session_id contre un JWT: {session_id[:10]}...")
+                
+                # Log complet de la requête pour debug
+                url = f'https://api.clerk.dev/v1/sessions/{session_id}/tokens'
+                headers = {
                     'Authorization': f'Bearer {clerk_secret_key}',
                     'Content-Type': 'application/json'
                 }
-            )
-            
-            if clerk_response.status_code != 200:
-                return Response(
-                    {'error': f'Failed to exchange session ID for JWT: {clerk_response.text}'}, 
-                    status=status.HTTP_400_BAD_REQUEST
+                logger.info(f"URL d'appel: {url}")
+                logger.info(f"Headers: Authorization: Bearer sk_****{clerk_secret_key[-4:]}")
+                
+                clerk_response = requests.get(
+                    url,
+                    headers=headers
                 )
-            
-            clerk_data = clerk_response.json()
-            jwt_token = clerk_data.get('jwt')
-            
-            if not jwt_token:
+                
+                logger.info(f"Code de statut de la réponse Clerk: {clerk_response.status_code}")
+                
+                if clerk_response.status_code != 200:
+                    error_msg = f"Échec de l'échange du session_id. Code: {clerk_response.status_code}, Réponse: {clerk_response.text}"
+                    logger.error(error_msg)
+                    return Response(
+                        {'error': error_msg}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                clerk_data = clerk_response.json()
+                jwt_token = clerk_data.get('jwt')
+                
+                if not jwt_token:
+                    logger.error(f"Pas de JWT trouvé dans la réponse Clerk: {clerk_data}")
+                    return Response(
+                        {'error': f'No JWT found in Clerk response: {clerk_data}'}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                logger.info("JWT obtenu avec succès")
+                
+            except Exception as e:
+                logger.exception(f"Exception lors de l'échange session_id contre JWT: {str(e)}")
                 return Response(
-                    {'error': 'No JWT found in Clerk response'}, 
+                    {'error': f'Failed to exchange session ID for JWT: {str(e)}'}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
         
         # Vérifier le JWT pour obtenir l'ID utilisateur
-        # Note: idéalement, nous devrions vérifier la signature du JWT
         try:
-            # Cette méthode simplifiée décode le JWT sans vérifier la signature
-            # Pour une implémentation en production, utilisez une bibliothèque comme PyJWT
+            logger.info("Décodage du JWT...")
             import jwt as pyjwt
             decoded = pyjwt.decode(jwt_token, options={"verify_signature": False})
             user_id = decoded.get('sub')
             
             if not user_id:
+                logger.error(f"Pas d'ID utilisateur trouvé dans le JWT: {decoded}")
                 return Response(
                     {'error': 'Invalid JWT token: missing user ID'}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
+            
+            logger.info(f"ID utilisateur extrait du JWT: {user_id}")
+            
         except Exception as e:
+            logger.exception(f"Exception lors du décodage du JWT: {str(e)}")
             return Response(
                 {'error': f'Failed to decode JWT: {str(e)}'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         # Obtenir les données utilisateur complètes depuis Clerk
-        user_response = requests.get(
-            f'https://api.clerk.dev/v1/users/{user_id}',
-            headers={
-                'Authorization': f'Bearer {clerk_secret_key}',
-                'Content-Type': 'application/json'
-            }
-        )
-        
-        if user_response.status_code != 200:
+        try:
+            logger.info(f"Récupération des détails utilisateur depuis Clerk pour user_id: {user_id}")
+            
+            user_response = requests.get(
+                f'https://api.clerk.dev/v1/users/{user_id}',
+                headers={
+                    'Authorization': f'Bearer {clerk_secret_key}',
+                    'Content-Type': 'application/json'
+                }
+            )
+            
+            logger.info(f"Code de statut de la réponse des détails utilisateur: {user_response.status_code}")
+            
+            if user_response.status_code != 200:
+                error_msg = f"Échec de la récupération des détails utilisateur. Code: {user_response.status_code}, Réponse: {user_response.text}"
+                logger.error(error_msg)
+                return Response(
+                    {'error': error_msg}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            user_data = user_response.json()
+            logger.info(f"Données utilisateur récupérées: {user_data.get('id')} - {user_data.get('email_addresses')}")
+            
+        except Exception as e:
+            logger.exception(f"Exception lors de la récupération des détails utilisateur: {str(e)}")
             return Response(
-                {'error': f'Failed to get user details: {user_response.text}'}, 
+                {'error': f'Failed to get user details: {str(e)}'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        user_data = user_response.json()
         
         # Récupérer l'email principal de l'utilisateur
         primary_email = None
@@ -460,14 +511,18 @@ def sync_clerk_user(request):
                     break
         
         if not primary_email:
+            logger.error(f"Pas d'email principal trouvé pour l'utilisateur: {user_data}")
             return Response(
                 {'error': 'Could not find primary email for user'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        logger.info(f"Email principal trouvé: {primary_email} (vérifié: {email_verified})")
+        
         # Créer ou mettre à jour l'utilisateur dans notre système
         try:
             user = User.objects.get(email=primary_email)
+            logger.info(f"Utilisateur existant trouvé avec email: {primary_email}")
             
             # Mettre à jour les informations utilisateur si nécessaire
             update_needed = False
@@ -483,11 +538,14 @@ def sync_clerk_user(request):
             # mettre à jour le champ auth_source
             try:
                 profile = user.profile
+                logger.info(f"Profil existant trouvé: source={profile.auth_source}")
                 if profile.auth_source != 'clerk':
                     profile.auth_source = 'clerk'
                     profile.clerk_user_id = user_id
                     profile.save()
-            except:
+                    logger.info(f"Profil mis à jour pour l'utilisateur {user.email}: auth_source=clerk, clerk_user_id={user_id}")
+            except Exception as profile_error:
+                logger.exception(f"Exception lors de l'accès au profil: {str(profile_error)}")
                 # Si le profil n'existe pas encore, le créer
                 from .models import Profile
                 Profile.objects.create(
@@ -496,12 +554,15 @@ def sync_clerk_user(request):
                     clerk_user_id=user_id,
                     email_verified=email_verified
                 )
+                logger.info(f"Nouveau profil créé pour l'utilisateur existant {user.email}")
                 
             if update_needed:
                 user.save()
+                logger.info(f"Informations utilisateur mises à jour pour {user.email}")
                 
         except User.DoesNotExist:
             # Créer un nouvel utilisateur
+            logger.info(f"Création d'un nouvel utilisateur avec email: {primary_email}")
             first_name = user_data.get('first_name', '')
             last_name = user_data.get('last_name', '')
             username = primary_email  # Utiliser l'email comme nom d'utilisateur
@@ -514,6 +575,7 @@ def sync_clerk_user(request):
                 # Définir un mot de passe aléatoire pour la sécurité
                 password=User.objects.make_random_password()
             )
+            logger.info(f"Nouvel utilisateur créé: {user.email}")
             
             # Créer un profil pour l'utilisateur
             from .models import Profile
@@ -523,14 +585,17 @@ def sync_clerk_user(request):
                 clerk_user_id=user_id,
                 email_verified=email_verified
             )
+            logger.info(f"Nouveau profil créé pour le nouvel utilisateur {user.email}")
         
         # Créer ou récupérer un token pour cet utilisateur
         token, _ = Token.objects.get_or_create(user=user)
+        logger.info(f"Token récupéré/créé pour {user.email}")
         
         # Récupérer ou créer un refresh token JWT si nous utilisons JWT
         refresh = RefreshToken.for_user(user)
+        logger.info(f"Refresh token JWT créé pour {user.email}")
         
-        return Response({
+        response_data = {
             'access': str(refresh.access_token),
             'refresh': str(refresh),
             'token': token.key,  # Token legacy pour compatibilité
@@ -542,9 +607,70 @@ def sync_clerk_user(request):
                 'auth_source': 'clerk',
                 'clerk_user_id': user_id
             }
-        })
+        }
+        
+        logger.info(f"Synchronisation réussie pour {user.email}")
+        return Response(response_data)
+    
     except Exception as e:
+        logger.exception(f"Exception non gérée dans sync_clerk_user: {str(e)}")
         return Response(
             {'error': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def check_clerk_config(request):
+    """
+    Endpoint de diagnostic pour vérifier la configuration Clerk
+    """
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Vérifier la clé API
+        clerk_secret_key = os.environ.get('CLERK_SECRET_KEY')
+        has_secret_key = bool(clerk_secret_key)
+        
+        # Ne pas exposer la clé complète pour des raisons de sécurité
+        masked_key = None
+        if clerk_secret_key:
+            masked_key = f"sk_****{clerk_secret_key[-4:]}" if len(clerk_secret_key) > 8 else "présente mais trop courte"
+        
+        # Essayer d'appeler l'API Clerk pour vérifier si la clé fonctionne
+        api_works = False
+        api_error = None
+        
+        if clerk_secret_key:
+            try:
+                # Test simple: liste des utilisateurs (max 1)
+                response = requests.get(
+                    'https://api.clerk.dev/v1/users?limit=1',
+                    headers={
+                        'Authorization': f'Bearer {clerk_secret_key}',
+                        'Content-Type': 'application/json'
+                    }
+                )
+                
+                api_works = response.status_code == 200
+                
+                if not api_works:
+                    api_error = f"Code: {response.status_code}, Réponse: {response.text}"
+                    logger.error(f"Test de l'API Clerk échoué: {api_error}")
+            except Exception as e:
+                api_error = str(e)
+                logger.exception(f"Exception lors du test de l'API Clerk: {api_error}")
+        
+        return Response({
+            'has_secret_key': has_secret_key,
+            'masked_key': masked_key,
+            'api_works': api_works,
+            'api_error': api_error,
+            'python_version': platform.python_version(),
+            'environment': os.environ.get('DJANGO_SETTINGS_MODULE', 'inconnu')
+        })
+    except Exception as e:
+        logger.exception(f"Exception dans check_clerk_config: {str(e)}")
+        return Response({
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
