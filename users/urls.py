@@ -11,4 +11,5 @@ urlpatterns = [
     path('profile/billing/info/', views.get_billing_info, name='billing-info'),
     path('profile/billing/update/', views.update_billing_info, name='update-billing'),
     path('api/auth/social/', views.social_login, name='social_login'),
+    path('api/sync-clerk-user/', views.sync_clerk_user, name='sync_clerk_user'),
 ] 

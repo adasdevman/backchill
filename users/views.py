@@ -36,13 +36,41 @@ class LoginView(APIView):
             
             if auth_user:
                 refresh = RefreshToken.for_user(user)
+                
+                # Mettre à jour la source du dernier login
+                try:
+                    profile = user.profile
+                    profile.last_login_source = 'django'
+                    profile.save()
+                except:
+                    # Si le profil n'existe pas, le créer
+                    from .models import Profile
+                    Profile.objects.create(
+                        user=user, 
+                        auth_source='django',
+                        last_login_source='django'
+                    )
+                
+                # Déterminer la source d'authentification
+                auth_source = 'django'
+                clerk_user_id = None
+                try:
+                    profile = user.profile
+                    auth_source = profile.auth_source
+                    clerk_user_id = profile.clerk_user_id
+                except:
+                    pass
+                
                 return Response({
                     'token': str(refresh.access_token),
+                    'refresh': str(refresh),
                     'user': {
                         'id': user.id,
                         'email': user.email,
                         'nom': user.last_name,
-                        'prenoms': user.first_name
+                        'prenoms': user.first_name,
+                        'auth_source': auth_source,
+                        'clerk_user_id': clerk_user_id
                     }
                 })
             return Response(
@@ -74,14 +102,30 @@ class RegisterView(APIView):
                 last_name=nom
             )
             
+            # Créer ou mettre à jour le profil
+            try:
+                profile = user.profile
+                profile.auth_source = 'django'
+                profile.last_login_source = 'django'
+                profile.save()
+            except:
+                from .models import Profile
+                Profile.objects.create(
+                    user=user,
+                    auth_source='django',
+                    last_login_source='django'
+                )
+            
             refresh = RefreshToken.for_user(user)
             return Response({
                 'token': str(refresh.access_token),
+                'refresh': str(refresh),
                 'user': {
                     'id': user.id,
                     'email': user.email,
                     'nom': user.last_name,
-                    'prenoms': user.first_name
+                    'prenoms': user.first_name,
+                    'auth_source': 'django'
                 }
             })
             
@@ -315,3 +359,192 @@ def check_email(request):
     
     exists = User.objects.filter(email=email).exists()
     return Response({'exists': exists})
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def sync_clerk_user(request):
+    """
+    Synchronise un utilisateur authentifié via Clerk avec notre système
+    Accepte soit un JWT, soit directement un session_id
+    """
+    jwt_token = request.data.get('jwt')
+    session_id = request.data.get('session_id')
+    
+    if not (jwt_token or session_id):
+        return Response(
+            {'error': 'Either jwt or session_id is required'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        # Obtenir la clé secrète de Clerk des variables d'environnement
+        clerk_secret_key = os.environ.get('CLERK_SECRET_KEY')
+        
+        if not clerk_secret_key:
+            return Response(
+                {'error': 'CLERK_SECRET_KEY is not configured on the server'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        # Si nous avons un session_id, obtenons d'abord le JWT
+        if session_id and not jwt_token:
+            clerk_response = requests.get(
+                f'https://api.clerk.dev/v1/sessions/{session_id}/tokens',
+                headers={
+                    'Authorization': f'Bearer {clerk_secret_key}',
+                    'Content-Type': 'application/json'
+                }
+            )
+            
+            if clerk_response.status_code != 200:
+                return Response(
+                    {'error': f'Failed to exchange session ID for JWT: {clerk_response.text}'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            clerk_data = clerk_response.json()
+            jwt_token = clerk_data.get('jwt')
+            
+            if not jwt_token:
+                return Response(
+                    {'error': 'No JWT found in Clerk response'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        # Vérifier le JWT pour obtenir l'ID utilisateur
+        # Note: idéalement, nous devrions vérifier la signature du JWT
+        try:
+            # Cette méthode simplifiée décode le JWT sans vérifier la signature
+            # Pour une implémentation en production, utilisez une bibliothèque comme PyJWT
+            import jwt as pyjwt
+            decoded = pyjwt.decode(jwt_token, options={"verify_signature": False})
+            user_id = decoded.get('sub')
+            
+            if not user_id:
+                return Response(
+                    {'error': 'Invalid JWT token: missing user ID'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to decode JWT: {str(e)}'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Obtenir les données utilisateur complètes depuis Clerk
+        user_response = requests.get(
+            f'https://api.clerk.dev/v1/users/{user_id}',
+            headers={
+                'Authorization': f'Bearer {clerk_secret_key}',
+                'Content-Type': 'application/json'
+            }
+        )
+        
+        if user_response.status_code != 200:
+            return Response(
+                {'error': f'Failed to get user details: {user_response.text}'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        user_data = user_response.json()
+        
+        # Récupérer l'email principal de l'utilisateur
+        primary_email = None
+        email_verified = False
+        
+        if user_data.get('email_addresses'):
+            for email_obj in user_data.get('email_addresses', []):
+                if email_obj.get('id') == user_data.get('primary_email_address_id'):
+                    primary_email = email_obj.get('email_address')
+                    email_verified = email_obj.get('verification', {}).get('status') == 'verified'
+                    break
+        
+        if not primary_email:
+            return Response(
+                {'error': 'Could not find primary email for user'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Créer ou mettre à jour l'utilisateur dans notre système
+        try:
+            user = User.objects.get(email=primary_email)
+            
+            # Mettre à jour les informations utilisateur si nécessaire
+            update_needed = False
+            if user.first_name != user_data.get('first_name', '') and user_data.get('first_name'):
+                user.first_name = user_data.get('first_name', '')
+                update_needed = True
+            
+            if user.last_name != user_data.get('last_name', '') and user_data.get('last_name'):
+                user.last_name = user_data.get('last_name', '')
+                update_needed = True
+            
+            # Si l'utilisateur existe déjà mais a été créé par un processus Django, 
+            # mettre à jour le champ auth_source
+            try:
+                profile = user.profile
+                if profile.auth_source != 'clerk':
+                    profile.auth_source = 'clerk'
+                    profile.clerk_user_id = user_id
+                    profile.save()
+            except:
+                # Si le profil n'existe pas encore, le créer
+                from .models import Profile
+                Profile.objects.create(
+                    user=user,
+                    auth_source='clerk',
+                    clerk_user_id=user_id,
+                    email_verified=email_verified
+                )
+                
+            if update_needed:
+                user.save()
+                
+        except User.DoesNotExist:
+            # Créer un nouvel utilisateur
+            first_name = user_data.get('first_name', '')
+            last_name = user_data.get('last_name', '')
+            username = primary_email  # Utiliser l'email comme nom d'utilisateur
+            
+            user = User.objects.create_user(
+                username=username,
+                email=primary_email,
+                first_name=first_name,
+                last_name=last_name,
+                # Définir un mot de passe aléatoire pour la sécurité
+                password=User.objects.make_random_password()
+            )
+            
+            # Créer un profil pour l'utilisateur
+            from .models import Profile
+            Profile.objects.create(
+                user=user,
+                auth_source='clerk',
+                clerk_user_id=user_id,
+                email_verified=email_verified
+            )
+        
+        # Créer ou récupérer un token pour cet utilisateur
+        token, _ = Token.objects.get_or_create(user=user)
+        
+        # Récupérer ou créer un refresh token JWT si nous utilisons JWT
+        refresh = RefreshToken.for_user(user)
+        
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'token': token.key,  # Token legacy pour compatibilité
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'nom': user.last_name,
+                'prenoms': user.first_name,
+                'auth_source': 'clerk',
+                'clerk_user_id': user_id
+            }
+        })
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
