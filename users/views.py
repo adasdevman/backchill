@@ -579,6 +579,9 @@ def sync_clerk_user(request):
             user_data = user_response.json()
             logger.info(f"Données utilisateur récupérées: {user_data.get('id')} - {user_data.get('email_addresses')}")
             
+            # Log complet des données Clerk pour le débogage
+            logger.info(f"Données utilisateur Clerk complètes: {json.dumps(user_data)}")
+            
         except Exception as e:
             logger.exception(f"Exception lors de la récupération des détails utilisateur: {str(e)}")
             return Response(
@@ -606,6 +609,12 @@ def sync_clerk_user(request):
         
         logger.info(f"Email principal trouvé: {primary_email} (vérifié: {email_verified})")
         
+        # Extraire le prénom et le nom avec une meilleure gestion des valeurs par défaut
+        first_name = user_data.get('first_name', '')
+        last_name = user_data.get('last_name', '')
+        
+        logger.info(f"Nom et prénom extrait de Clerk: first_name='{first_name}', last_name='{last_name}'")
+        
         # Créer ou mettre à jour l'utilisateur dans notre système
         try:
             user = User.objects.get(email=primary_email)
@@ -613,12 +622,14 @@ def sync_clerk_user(request):
             
             # Mettre à jour les informations utilisateur si nécessaire
             update_needed = False
-            if user.first_name != user_data.get('first_name', '') and user_data.get('first_name'):
-                user.first_name = user_data.get('first_name', '')
+            if user.first_name != first_name and first_name:
+                logger.info(f"Mise à jour du prénom de '{user.first_name}' à '{first_name}'")
+                user.first_name = first_name
                 update_needed = True
             
-            if user.last_name != user_data.get('last_name', '') and user_data.get('last_name'):
-                user.last_name = user_data.get('last_name', '')
+            if user.last_name != last_name and last_name:
+                logger.info(f"Mise à jour du nom de '{user.last_name}' à '{last_name}'")
+                user.last_name = last_name
                 update_needed = True
             
             # Si l'utilisateur existe déjà mais a été créé par un processus Django, 
@@ -660,8 +671,7 @@ def sync_clerk_user(request):
         except User.DoesNotExist:
             # Créer un nouvel utilisateur
             logger.info(f"Création d'un nouvel utilisateur avec email: {primary_email}")
-            first_name = user_data.get('first_name', '')
-            last_name = user_data.get('last_name', '')
+            logger.info(f"Données pour le nouvel utilisateur: first_name='{first_name}', last_name='{last_name}'")
             
             # La méthode create_user attend l'email comme premier argument
             # et génère le username automatiquement
@@ -672,7 +682,7 @@ def sync_clerk_user(request):
                 # Définir un mot de passe aléatoire pour la sécurité
                 password=User.objects.make_random_password()
             )
-            logger.info(f"Nouvel utilisateur créé: {user.email}")
+            logger.info(f"Nouvel utilisateur créé: {user.email}, first_name='{user.first_name}', last_name='{user.last_name}'")
             
             # Créer un profil pour l'utilisateur
             from .models import Profile
@@ -698,6 +708,7 @@ def sync_clerk_user(request):
         refresh = RefreshToken.for_user(user)
         logger.info(f"Refresh token JWT créé pour {user.email}")
         
+        # Assurer que les données renvoyées au client sont complètes
         response_data = {
             'access': str(refresh.access_token),
             'refresh': str(refresh),
@@ -706,6 +717,8 @@ def sync_clerk_user(request):
                 'email': user.email,
                 'nom': user.last_name,
                 'prenoms': user.first_name,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
                 'auth_source': 'clerk',
                 'clerk_user_id': user_id
             }
