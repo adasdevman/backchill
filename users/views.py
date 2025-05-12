@@ -241,12 +241,13 @@ def social_login(request):
             )
         
         # Faire une requête à l'API Clerk pour échanger le session_id contre un token JWT
-        clerk_response = requests.get(
+        clerk_response = requests.post(
             'https://api.clerk.dev/v1/sessions/' + session_id + '/tokens',
             headers={
                 'Authorization': f'Bearer {clerk_secret_key}',
                 'Content-Type': 'application/json'
-            }
+            },
+            json={}  # Corps vide de la requête POST
         )
         
         if clerk_response.status_code != 200:
@@ -552,13 +553,23 @@ def sync_clerk_user(request):
                 logger.exception(f"Exception lors de l'accès au profil: {str(profile_error)}")
                 # Si le profil n'existe pas encore, le créer
                 from .models import Profile
-                Profile.objects.create(
+                # Utiliser get_or_create pour éviter les doublons
+                profile, created = Profile.objects.get_or_create(
                     user=user,
-                    auth_source='clerk',
-                    clerk_user_id=user_id,
-                    email_verified=email_verified
+                    defaults={
+                        'auth_source': 'clerk',
+                        'clerk_user_id': user_id,
+                        'email_verified': email_verified
+                    }
                 )
-                logger.info(f"Nouveau profil créé pour l'utilisateur existant {user.email}")
+                if not created:
+                    # Si le profil existait déjà, mettre à jour les champs
+                    profile.auth_source = 'clerk'
+                    profile.clerk_user_id = user_id
+                    profile.email_verified = email_verified
+                    profile.save()
+                
+                logger.info(f"Profil {'créé' if created else 'mis à jour'} pour l'utilisateur {user.email}")
                 
             if update_needed:
                 user.save()
@@ -583,13 +594,23 @@ def sync_clerk_user(request):
             
             # Créer un profil pour l'utilisateur
             from .models import Profile
-            Profile.objects.create(
+            # Utiliser get_or_create pour éviter les doublons
+            profile, created = Profile.objects.get_or_create(
                 user=user,
-                auth_source='clerk',
-                clerk_user_id=user_id,
-                email_verified=email_verified
+                defaults={
+                    'auth_source': 'clerk',
+                    'clerk_user_id': user_id,
+                    'email_verified': email_verified
+                }
             )
-            logger.info(f"Nouveau profil créé pour le nouvel utilisateur {user.email}")
+            if not created:
+                # Si le profil existait déjà, mettre à jour les champs
+                profile.auth_source = 'clerk'
+                profile.clerk_user_id = user_id
+                profile.email_verified = email_verified
+                profile.save()
+            
+            logger.info(f"Profil {'créé' if created else 'mis à jour'} pour le nouvel utilisateur {user.email}")
         
         # Créer ou récupérer un token pour cet utilisateur
         token, _ = Token.objects.get_or_create(user=user)
