@@ -27,6 +27,9 @@ from dotenv import load_dotenv
 
 User = get_user_model()
 
+# Configure logger
+logger = logging.getLogger(__name__)
+
 # Charger les variables d'environnement
 load_dotenv()
 
@@ -131,7 +134,7 @@ class RegisterView(APIView):
                     user=user,
                     auth_source='django',
                     last_login_source='django'
-                )
+            )
             
             refresh = RefreshToken.for_user(user)
             return Response({
@@ -778,6 +781,7 @@ class CloudinaryUploadView(APIView):
                 folder="chillnow",
                 use_filename=True,
                 unique_filename=True,
+                upload_preset="chillnow_app",  # Added upload_preset to match the frontend setting
             )
             
             logger.info(f"Cloudinary upload result: {upload_result}")
