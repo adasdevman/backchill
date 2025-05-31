@@ -774,14 +774,20 @@ class CloudinaryUploadView(APIView):
             
             logger.info(f"Uploading file to Cloudinary: {file.name}, type: {resource_type}")
             
+            # Déterminer le dossier en fonction du type de ressource
+            folder_name = "chillnow" # Dossier par défaut
+            if resource_type == 'video':
+                folder_name = "media/annonces/videos"
+            elif resource_type == 'image':
+                folder_name = "media/annonces/photos"
+            
             # Uploader le fichier à Cloudinary
             upload_result = cloudinary.uploader.upload(
                 file,
                 resource_type=resource_type,
-                folder="chillnow",
+                folder=folder_name,
                 use_filename=True,
                 unique_filename=True,
-                upload_preset="chillnow_app",  # Added upload_preset to match the frontend setting
             )
             
             logger.info(f"Cloudinary upload result: {upload_result}")
