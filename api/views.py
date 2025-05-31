@@ -507,6 +507,30 @@ def mes_chills(request):
             status=500
         )
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def received_bookings(request):
+    """Récupère les réservations reçues pour les annonces de l'utilisateur."""
+    try:
+        # Récupérer les annonces de l'utilisateur
+        user_annonces = Annonce.objects.filter(utilisateur=request.user)
+        
+        # Récupérer les paiements associés à ces annonces
+        bookings = Payment.objects.filter(
+            annonce__in=user_annonces,
+            status='COMPLETED',
+            payment_type='reservation'
+        )
+        
+        serializer = PaymentSerializer(bookings, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        logger.error(f"Erreur dans received_bookings: {str(e)}")
+        return Response(
+            {'error': 'Une erreur est survenue lors de la récupération des réservations reçues'},
+            status=500
+        )
+
 class NotificationViewSet(ModelViewSet):
     serializer_class = NotificationSerializer
     
@@ -808,3 +832,27 @@ class FacebookDataDeletionView(APIView):
                 {'error': 'Internal server error'}, 
                 status=500
             )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sold_tickets(request):
+    """Récupère les tickets vendus par l'utilisateur."""
+    try:
+        # Récupérer les annonces de l'utilisateur
+        user_annonces = Annonce.objects.filter(utilisateur=request.user)
+        
+        # Récupérer les paiements de type ticket associés à ces annonces
+        tickets = Payment.objects.filter(
+            annonce__in=user_annonces,
+            status='COMPLETED',
+            payment_type='ticket'
+        )
+        
+        serializer = PaymentSerializer(tickets, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        logger.error(f"Erreur dans sold_tickets: {str(e)}")
+        return Response(
+            {'error': 'Une erreur est survenue lors de la récupération des tickets vendus'},
+            status=500
+        )
