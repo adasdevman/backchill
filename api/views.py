@@ -679,27 +679,71 @@ class UploadAnnonceVideoView(APIView):
 
     def post(self, request, pk, format=None):
         try:
+            logger.info(f"Tentative de téléchargement de vidéo pour l'annonce {pk}")
             annonce = Annonce.objects.get(pk=pk, utilisateur=request.user)
         except Annonce.DoesNotExist:
+            logger.warning(f"Annonce {pk} non trouvée ou non autorisée pour l'utilisateur {request.user.id}")
             return Response({'error': 'Annonce non trouvée ou non autorisée.'}, status=status.HTTP_404_NOT_FOUND)
 
         if 'video' not in request.FILES:
+            logger.warning(f"Aucun fichier vidéo fourni dans la requête pour l'annonce {pk}")
             return Response({'error': 'Aucun fichier vidéo fourni.'}, status=status.HTTP_400_BAD_REQUEST)
 
         video_file = request.FILES['video']
+        logger.info(f"Fichier vidéo reçu: {video_file.name}, taille: {video_file.size}, type: {video_file.content_type}")
         
-        # Basic validation for video file (e.g., size, type)
-        # Add more robust validation as needed
+        # Validation de la taille du fichier
         if video_file.size > 50 * 1024 * 1024: # 50MB limit
+            logger.warning(f"Taille du fichier trop grande: {video_file.size} bytes")
             return Response({'error': 'La taille de la vidéo ne doit pas dépasser 50MB.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # You might want to check content_type as well
-        # if not video_file.content_type.startswith('video'):
-        #     return Response({'error': 'Type de fichier invalide. Seules les vidéos sont autorisées.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        galerie_video = GalerieVideo.objects.create(annonce=annonce, video=video_file)
-        serializer = GalerieVideoSerializer(galerie_video)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Validation du type de fichier
+        if not video_file.content_type.startswith('video/'):
+            logger.warning(f"Type de fichier non autorisé: {video_file.content_type}")
+            return Response({'error': 'Type de fichier invalide. Seules les vidéos sont autorisées.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            # Vérification de la configuration Cloudinary
+            from django.conf import settings
+            logger.info(f"Configuration Cloudinary: CLOUD_NAME={settings.CLOUDINARY_STORAGE.get('CLOUD_NAME')}")
+            logger.info(f"DEFAULT_FILE_STORAGE={settings.DEFAULT_FILE_STORAGE}")
+            
+            # Création de l'entrée dans la galerie vidéo (téléchargement sur Cloudinary automatique)
+            logger.info(f"Début du téléchargement de la vidéo {video_file.name} vers Cloudinary")
+            galerie_video = GalerieVideo.objects.create(annonce=annonce, video=video_file)
+            logger.info(f"Vidéo téléchargée avec succès vers Cloudinary pour l'annonce {pk}, ID: {galerie_video.id}")
+            
+            # Récupération de l'URL Cloudinary
+            video_url = galerie_video.video.url
+            logger.info(f"URL Cloudinary de la vidéo: {video_url}")
+            
+            serializer = GalerieVideoSerializer(galerie_video)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        except OSError as e:
+            logger.error(f"Erreur d'accès au système de fichiers: {str(e)}", exc_info=True)
+            return Response(
+                {'error': f'Erreur d\'accès au système de fichiers: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        except ValidationError as e:
+            logger.error(f"Erreur de validation: {str(e)}", exc_info=True)
+            return Response(
+                {'error': f'Validation du fichier échouée: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except ImportError as e:
+            logger.error(f"Erreur d'importation (peut-être liée à Cloudinary): {str(e)}", exc_info=True)
+            return Response(
+                {'error': f'Problème de configuration Cloudinary: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        except Exception as e:
+            logger.error(f"Erreur lors de l'enregistrement de la vidéo: {str(e)}", exc_info=True)
+            return Response(
+                {'error': f'Le téléchargement de la vidéo a échoué: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
