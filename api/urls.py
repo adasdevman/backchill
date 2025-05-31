@@ -6,7 +6,8 @@ from .views import (
     create_payment, payment_history, CinetPayWebhookView,
     check_email, mes_annonces, mes_tickets, mes_chills,
     NotificationViewSet, upload_annonce_photo, received_bookings,
-    sold_tickets, delete_account_view, FacebookDataDeletionView
+    sold_tickets, delete_account_view, FacebookDataDeletionView,
+    UploadAnnonceVideoView
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 from .auth.apple import AppleAuthView
@@ -29,6 +30,7 @@ urlpatterns = [
     path('annonces/', AnnonceList.as_view(), name='annonce-list'),
     path('annonces/<int:pk>/', AnnonceDetail.as_view(), name='annonce-detail'),
     path('annonces/<int:pk>/photos/', upload_annonce_photo, name='upload-annonce-photo'),
+    path('annonces/<int:pk>/video/', UploadAnnonceVideoView.as_view(), name='upload-annonce-video'),
     path('payments/create/', create_payment, name='create-payment'),
     path('payments/history/', payment_history, name='payment-history'),
     path('payments/received-bookings/', received_bookings, name='received-bookings'),

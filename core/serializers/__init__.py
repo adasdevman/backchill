@@ -4,7 +4,8 @@ from .annonce import (
     AnnonceSerializer,
     HoraireSerializer,
     TarifSerializer,
-    GaleriePhotoSerializer
+    GaleriePhotoSerializer,
+    GalerieVideoSerializer
 )
 from .categorie import CategorieSerializer, SousCategorieSerializer
 from .payment import PaymentSerializer
@@ -19,6 +20,7 @@ __all__ = [
     'HoraireSerializer',
     'TarifSerializer',
     'GaleriePhotoSerializer',
+    'GalerieVideoSerializer',
     'PaymentSerializer',
     'NotificationSerializer'
-] 
+]
