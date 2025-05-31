@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate
 from users.models import User
 from core.models import (
     Categorie, SousCategorie, Annonce,
-    GaleriePhoto, Horaire, Payment, Tarif, Notification
+    GaleriePhoto, Horaire, Payment, Tarif, Notification, GalerieVideo
 )
 from core.serializers import (
     AnnonceListSerializer,
@@ -19,6 +19,7 @@ from core.serializers import (
     HoraireSerializer,
     TarifSerializer,
     GaleriePhotoSerializer,
+    GalerieVideoSerializer,  # Added this line
     PaymentSerializer,
     NotificationSerializer
 )
@@ -648,73 +649,33 @@ def upload_annonce_photo(request, pk):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def received_bookings(request):
-    """Récupère les réservations reçues pour les établissements de l'annonceur."""
-    try:
-        # Récupérer les IDs des annonces de l'annonceur
-        annonce_ids = Annonce.objects.filter(utilisateur=request.user).values_list('id', flat=True)
-        logger.info(f"IDs des annonces trouvées pour l'utilisateur {request.user.id}: {list(annonce_ids)}")
-        
-        # Récupérer tous les paiements pour ces annonces pour le débogage
-        all_payments = Payment.objects.filter(annonce_id__in=annonce_ids)
-        logger.info(f"Nombre total de paiements trouvés: {all_payments.count()}")
-        logger.info(f"Types de paiements trouvés: {list(all_payments.values_list('payment_type', flat=True).distinct())}")
-        logger.info(f"Statuts trouvés: {list(all_payments.values_list('status', flat=True).distinct())}")
-        
-        # Récupérer les paiements filtrés
-        bookings = Payment.objects.filter(
-            annonce_id__in=annonce_ids,
-            payment_type__in=['table', 'reservation'],  # Accepter les deux types possibles
-            status__in=['completed', 'COMPLETED']  # Accepter les deux formats possibles
-        ).order_by('-created')
-        
-        logger.info(f"Nombre de réservations après filtrage: {bookings.count()}")
-        
-        serializer = PaymentSerializer(bookings, many=True)
-        return Response(serializer.data)
-    except Exception as e:
-        logger.error(f"Erreur dans received_bookings: {str(e)}")
-        return Response(
-            {'error': 'Une erreur est survenue lors de la récupération des réservations'},
-            status=500
-        )
+class UploadAnnonceVideoView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def sold_tickets(request):
-    """Récupère les tickets vendus pour les événements de l'annonceur."""
-    try:
-        # Récupérer les IDs des annonces de l'annonceur
-        annonce_ids = Annonce.objects.filter(utilisateur=request.user).values_list('id', flat=True)
-        logger.info(f"IDs des événements trouvés pour l'utilisateur {request.user.id}: {list(annonce_ids)}")
+    def post(self, request, pk, format=None):
+        try:
+            annonce = Annonce.objects.get(pk=pk, utilisateur=request.user)
+        except Annonce.DoesNotExist:
+            return Response({'error': 'Annonce non trouvée ou non autorisée.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if 'video' not in request.FILES:
+            return Response({'error': 'Aucun fichier vidéo fourni.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        video_file = request.FILES['video']
         
-        # Récupérer tous les paiements de tickets pour ces annonces pour le débogage
-        all_tickets = Payment.objects.filter(
-            annonce_id__in=annonce_ids,
-            payment_type='ticket'
-        )
-        logger.info(f"Nombre total de tickets trouvés: {all_tickets.count()}")
-        logger.info(f"Statuts des tickets trouvés: {list(all_tickets.values_list('status', flat=True).distinct())}")
+        # Basic validation for video file (e.g., size, type)
+        # Add more robust validation as needed
+        if video_file.size > 50 * 1024 * 1024: # 50MB limit
+            return Response({'error': 'La taille de la vidéo ne doit pas dépasser 50MB.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Récupérer les tickets vendus (complétés)
-        tickets = Payment.objects.filter(
-            annonce_id__in=annonce_ids,
-            payment_type='ticket',
-            status__in=['completed', 'COMPLETED']  # Accepter les deux formats possibles
-        ).order_by('-created')
-        
-        logger.info(f"Nombre de tickets vendus après filtrage: {tickets.count()}")
-        
-        serializer = PaymentSerializer(tickets, many=True)
-        return Response(serializer.data)
-    except Exception as e:
-        logger.error(f"Erreur dans sold_tickets: {str(e)}")
-        return Response(
-            {'error': 'Une erreur est survenue lors de la récupération des tickets vendus'},
-            status=500
-        )
+        # You might want to check content_type as well
+        # if not video_file.content_type.startswith('video'):
+        #     return Response({'error': 'Type de fichier invalide. Seules les vidéos sont autorisées.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        galerie_video = GalerieVideo.objects.create(annonce=annonce, video=video_file)
+        serializer = GalerieVideoSerializer(galerie_video)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -132,4 +132,26 @@ class GaleriePhoto(models.Model):
             if storage.exists(self.image.name):
                 storage.delete(self.image.name)
         # Puis supprimer l'enregistrement de la base de données
-        super().delete(*args, **kwargs) 
+        super().delete(*args, **kwargs)
+
+class GalerieVideo(models.Model):
+    annonce = models.ForeignKey(Annonce, related_name='videos', on_delete=models.CASCADE)
+    video = models.FileField(upload_to='annonces/videos/')
+    created = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = 'Vidéo'
+        verbose_name_plural = 'Vidéos'
+        ordering = ['-created']
+
+    def __str__(self):
+        return f"Vidéo pour {self.annonce.titre}"
+
+    def delete(self, *args, **kwargs):
+        # Supprimer le fichier physique
+        if self.video:
+            storage = self.video.storage
+            if storage.exists(self.video.name):
+                storage.delete(self.video.name)
+        # Puis supprimer l'enregistrement de la base de données
+        super().delete(*args, **kwargs)
