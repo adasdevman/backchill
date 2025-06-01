@@ -130,16 +130,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configuration des médias
 MEDIA_DIRS = [
     os.path.join(MEDIA_ROOT, 'annonces/photos'),
-    os.path.join(MEDIA_ROOT, 'annonces/videos'),
 ]
 
 # Créer les dossiers nécessaires au démarrage
 for directory in MEDIA_DIRS:
     os.makedirs(directory, exist_ok=True)
-
-# Configuration des limites de téléchargement
-DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 Mo en octets
-FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 Mo en octets
 
 # Configuration du logging
 LOGGING = {

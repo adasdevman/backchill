@@ -507,30 +507,6 @@ def mes_chills(request):
             status=500
         )
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def received_bookings(request):
-    """Récupère les réservations reçues pour les annonces de l'utilisateur."""
-    try:
-        # Récupérer les annonces de l'utilisateur
-        user_annonces = Annonce.objects.filter(utilisateur=request.user)
-        
-        # Récupérer les paiements associés à ces annonces
-        bookings = Payment.objects.filter(
-            annonce__in=user_annonces,
-            status='COMPLETED',
-            payment_type='reservation'
-        )
-        
-        serializer = PaymentSerializer(bookings, many=True)
-        return Response(serializer.data)
-    except Exception as e:
-        logger.error(f"Erreur dans received_bookings: {str(e)}")
-        return Response(
-            {'error': 'Une erreur est survenue lors de la récupération des réservations reçues'},
-            status=500
-        )
-
 class NotificationViewSet(ModelViewSet):
     serializer_class = NotificationSerializer
     
@@ -679,65 +655,27 @@ class UploadAnnonceVideoView(APIView):
 
     def post(self, request, pk, format=None):
         try:
-            logger.info(f"Tentative de téléchargement de vidéo pour l'annonce {pk}")
             annonce = Annonce.objects.get(pk=pk, utilisateur=request.user)
         except Annonce.DoesNotExist:
-            logger.warning(f"Annonce {pk} non trouvée ou non autorisée pour l'utilisateur {request.user.id}")
             return Response({'error': 'Annonce non trouvée ou non autorisée.'}, status=status.HTTP_404_NOT_FOUND)
 
         if 'video' not in request.FILES:
-            logger.warning(f"Aucun fichier vidéo fourni dans la requête pour l'annonce {pk}")
             return Response({'error': 'Aucun fichier vidéo fourni.'}, status=status.HTTP_400_BAD_REQUEST)
 
         video_file = request.FILES['video']
-        logger.info(f"Fichier vidéo reçu: {video_file.name}, taille: {video_file.size}, type: {video_file.content_type}")
         
-        # Validation de la taille du fichier
+        # Basic validation for video file (e.g., size, type)
+        # Add more robust validation as needed
         if video_file.size > 50 * 1024 * 1024: # 50MB limit
-            logger.warning(f"Taille du fichier trop grande: {video_file.size} bytes")
             return Response({'error': 'La taille de la vidéo ne doit pas dépasser 50MB.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Validation du type de fichier
-        if not video_file.content_type.startswith('video/'):
-            logger.warning(f"Type de fichier non autorisé: {video_file.content_type}")
-            return Response({'error': 'Type de fichier invalide. Seules les vidéos sont autorisées.'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            # Vérification de la configuration Cloudinary
-            from django.conf import settings
-            logger.info(f"Configuration Cloudinary: CLOUD_NAME={settings.CLOUDINARY_STORAGE.get('CLOUD_NAME')}")
-            logger.info(f"DEFAULT_FILE_STORAGE={settings.DEFAULT_FILE_STORAGE}")
-            
-            # Création de l'entrée dans la galerie vidéo (téléchargement sur Cloudinary automatique)
-            logger.info(f"Début du téléchargement de la vidéo {video_file.name} vers Cloudinary")
-            galerie_video = GalerieVideo.objects.create(annonce=annonce, video=video_file)
-            logger.info(f"Vidéo téléchargée avec succès vers Cloudinary pour l'annonce {pk}, ID: {galerie_video.id}")
-            
-            # Récupération de l'URL Cloudinary
-            video_url = galerie_video.video.url
-            logger.info(f"URL Cloudinary de la vidéo: {video_url}")
-            
-            serializer = GalerieVideoSerializer(galerie_video)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
-        except OSError as e:
-            logger.error(f"Erreur d'accès au système de fichiers: {str(e)}", exc_info=True)
-            return Response(
-                {'error': f'Erreur d\'accès au système de fichiers: {str(e)}'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-        except ValidationError as e:
-            logger.error(f"Erreur de validation: {str(e)}", exc_info=True)
-            return Response(
-                {'error': f'Validation du fichier échouée: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            logger.error(f"Erreur lors de l'enregistrement de la vidéo: {str(e)}", exc_info=True)
-            return Response(
-                {'error': f'Le téléchargement de la vidéo a échoué: {str(e)}'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        # You might want to check content_type as well
+        # if not video_file.content_type.startswith('video'):
+        #     return Response({'error': 'Type de fichier invalide. Seules les vidéos sont autorisées.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        galerie_video = GalerieVideo.objects.create(annonce=annonce, video=video_file)
+        serializer = GalerieVideoSerializer(galerie_video)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -870,27 +808,3 @@ class FacebookDataDeletionView(APIView):
                 {'error': 'Internal server error'}, 
                 status=500
             )
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def sold_tickets(request):
-    """Récupère les tickets vendus par l'utilisateur."""
-    try:
-        # Récupérer les annonces de l'utilisateur
-        user_annonces = Annonce.objects.filter(utilisateur=request.user)
-        
-        # Récupérer les paiements de type ticket associés à ces annonces
-        tickets = Payment.objects.filter(
-            annonce__in=user_annonces,
-            status='COMPLETED',
-            payment_type='ticket'
-        )
-        
-        serializer = PaymentSerializer(tickets, many=True)
-        return Response(serializer.data)
-    except Exception as e:
-        logger.error(f"Erreur dans sold_tickets: {str(e)}")
-        return Response(
-            {'error': 'Une erreur est survenue lors de la récupération des tickets vendus'},
-            status=500
-        )
