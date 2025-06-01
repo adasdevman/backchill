@@ -1,5 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework.response import Response
+from rest_framework import status
 
 # Utiliser le module d'importation robuste qui gère les erreurs potentielles
 from .views_imports import (
@@ -22,9 +24,22 @@ from .auth.google import GoogleAuthView
 
 app_name = 'api'
 
-# Create a router and register our viewsets with it
+# Create a router and register our viewsets with it, with safety checks
 router = DefaultRouter()
-router.register('notifications', NotificationViewSet, basename='notification')
+
+# Vérifier si NotificationViewSet est un véritable ViewSet avant de l'enregistrer
+try:
+    # Vérifier si c'est un vrai ViewSet avec les méthodes requises
+    if hasattr(NotificationViewSet, 'as_view') and callable(getattr(NotificationViewSet, 'as_view', None)):
+        router.register('notifications', NotificationViewSet, basename='notification')
+    else:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error("NotificationViewSet n'est pas un ViewSet valide, ignoré dans le routeur.")
+except Exception as e:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.error(f"Erreur lors de l'enregistrement de NotificationViewSet: {str(e)}")
 
 # First create the base URL patterns
 urlpatterns = [
@@ -56,5 +71,14 @@ urlpatterns = [
     path('cloudinary/config/', CloudinaryConfigView.as_view(), name='cloudinary-config'),
 ]
 
-# Then extend the urlpatterns with the router URLs
-urlpatterns.extend(router.urls)
+# Then extend the urlpatterns with the router URLs, en sécurisant pour éviter les erreurs
+try:
+    # Vérifier si le router a des URLs à ajouter
+    if hasattr(router, 'urls') and router.urls:
+        urlpatterns.extend(router.urls)
+except Exception as e:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.error(f"Erreur lors de l'extension des URLs avec le routeur: {str(e)}")
+    # En cas d'erreur, ajouter manuellement des routes pour les notifications
+    urlpatterns.append(path('notifications/', lambda req: Response({"error": "Service temporairement indisponible"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)))

@@ -110,9 +110,19 @@ except ImportError:
                 def view(request):
                     return Response({"error": "Vue non disponible - problème d'importation"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return view
-        
-        class NotificationViewSet:
-            pass
+          class NotificationViewSet:
+            """Classe de secours pour le NotificationViewSet"""
+            @classmethod
+            def as_view(cls, actions=None, **kwargs):
+                def view(request, *args, **kwargs):
+                    return Response({"error": "Service de notifications temporairement indisponible"}, 
+                                    status=status.HTTP_503_SERVICE_UNAVAILABLE)
+                return view
+                
+            # Méthodes pour rendre compatible avec le router DRF
+            @classmethod
+            def get_extra_actions(cls):
+                return []
         
         create_payment = login_view
         payment_history = login_view
