@@ -46,5 +46,5 @@ urlpatterns = [
     path('auth/google', GoogleAuthView.as_view(), name='google_auth'),
 ]
 
-# Then extend the urlpatterns with the router URLs
+# okThen extend the urlpatterns with the router URLs
 urlpatterns.extend(router.urls)
