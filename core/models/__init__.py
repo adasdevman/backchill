@@ -5,8 +5,7 @@ from .annonce import (
     Annonce,
     Horaire,
     Tarif,
-    GaleriePhoto,
-    GalerieVideo
+    GaleriePhoto
 )
 from .payment import Payment
 from .notification import Notification
@@ -19,7 +18,6 @@ __all__ = [
     'Horaire',
     'Tarif',
     'GaleriePhoto',
-    'GalerieVideo',
     'Payment',
     'Notification'
 ]
