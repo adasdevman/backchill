@@ -1,10 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework.response import Response
-from rest_framework import status
-
-# Utiliser le module d'importation robuste qui gère les erreurs potentielles
-from .views_imports import (
+from .views import (
     login_view, register_view, register_annonceur_view,
     profile_view, CategorieList, AnnonceList, AnnonceDetail,
     create_payment, payment_history, CinetPayWebhookView,
@@ -13,33 +9,15 @@ from .views_imports import (
     sold_tickets, delete_account_view, FacebookDataDeletionView,
     UploadAnnonceVideoView
 )
-
-# Import explicites des vues Cloudinary depuis leurs modules spécifiques
-from api.views.cloudinary_views import CloudinaryUploadView
-from api.views.cloudinary_admin_views import CloudinarySetupView
-from api.views.cloudinary_config_view import CloudinaryConfigView
 from rest_framework_simplejwt.views import TokenRefreshView
 from .auth.apple import AppleAuthView
 from .auth.google import GoogleAuthView
 
 app_name = 'api'
 
-# Create a router and register our viewsets with it, with safety checks
+# Create a router and register our viewsets with it
 router = DefaultRouter()
-
-# Vérifier si NotificationViewSet est un véritable ViewSet avant de l'enregistrer
-try:
-    # Vérifier si c'est un vrai ViewSet avec les méthodes requises
-    if hasattr(NotificationViewSet, 'as_view') and callable(getattr(NotificationViewSet, 'as_view', None)):
-        router.register('notifications', NotificationViewSet, basename='notification')
-    else:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error("NotificationViewSet n'est pas un ViewSet valide, ignoré dans le routeur.")
-except Exception as e:
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.error(f"Erreur lors de l'enregistrement de NotificationViewSet: {str(e)}")
+router.register('notifications', NotificationViewSet, basename='notification')
 
 # First create the base URL patterns
 urlpatterns = [
@@ -66,19 +44,7 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/apple', AppleAuthView.as_view(), name='apple_auth'),
     path('auth/google', GoogleAuthView.as_view(), name='google_auth'),
-    path('cloudinary/upload/', CloudinaryUploadView.as_view(), name='cloudinary-upload'),
-    path('cloudinary/setup/', CloudinarySetupView.as_view(), name='cloudinary-setup'),
-    path('cloudinary/config/', CloudinaryConfigView.as_view(), name='cloudinary-config'),
 ]
 
-# Then extend the urlpatterns with the router URLs, en sécurisant pour éviter les erreurs
-try:
-    # Vérifier si le router a des URLs à ajouter
-    if hasattr(router, 'urls') and router.urls:
-        urlpatterns.extend(router.urls)
-except Exception as e:
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.error(f"Erreur lors de l'extension des URLs avec le routeur: {str(e)}")
-    # En cas d'erreur, ajouter manuellement des routes pour les notifications
-    urlpatterns.append(path('notifications/', lambda req: Response({"error": "Service temporairement indisponible"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)))
+# Then extend the urlpatterns with the router URLs
+urlpatterns.extend(router.urls)
