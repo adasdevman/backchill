@@ -1,22 +1,36 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-# Importer les modules Cloudinary spécifiques depuis leur emplacement exact
-from .views.cloudinary_views import CloudinaryUploadView
-from .views.cloudinary_admin_views import CloudinarySetupView
-from .views.cloudinary_config_view import CloudinaryConfigView
+# Importer directement depuis le fichier principal views.py, en évitant les importations circulaires
+# L'import absolu évite de passer par .views/ qui déclenche __init__.py
+import api.views as views_module
+# Import explicites des modules Cloudinary (sans passer par __init__.py)
+from api.views.cloudinary_views import CloudinaryUploadView
+from api.views.cloudinary_admin_views import CloudinarySetupView
+from api.views.cloudinary_config_view import CloudinaryConfigView
 
-# Importer les vues directement depuis le fichier views.py (éviter l'importation via views/...)
-# En utilisant un import absolu pour éviter la boucle d'importation
-from .views import (
-    login_view, register_view, register_annonceur_view,
-    profile_view, CategorieList, AnnonceList, AnnonceDetail,
-    create_payment, payment_history, CinetPayWebhookView,
-    check_email, mes_annonces, mes_tickets, mes_chills,
-    NotificationViewSet, upload_annonce_photo, received_bookings,
-    sold_tickets, delete_account_view, FacebookDataDeletionView,
-    UploadAnnonceVideoView
-)
+# Assignation des vues pour les utiliser dans les URLs
+login_view = views_module.login_view
+register_view = views_module.register_view
+register_annonceur_view = views_module.register_annonceur_view
+profile_view = views_module.profile_view
+CategorieList = views_module.CategorieList
+AnnonceList = views_module.AnnonceList
+AnnonceDetail = views_module.AnnonceDetail
+create_payment = views_module.create_payment
+payment_history = views_module.payment_history
+CinetPayWebhookView = views_module.CinetPayWebhookView
+check_email = views_module.check_email
+mes_annonces = views_module.mes_annonces
+mes_tickets = views_module.mes_tickets
+mes_chills = views_module.mes_chills
+NotificationViewSet = views_module.NotificationViewSet
+upload_annonce_photo = views_module.upload_annonce_photo
+received_bookings = views_module.received_bookings
+sold_tickets = views_module.sold_tickets
+delete_account_view = views_module.delete_account_view
+FacebookDataDeletionView = views_module.FacebookDataDeletionView
+UploadAnnonceVideoView = views_module.UploadAnnonceVideoView
 from rest_framework_simplejwt.views import TokenRefreshView
 from .auth.apple import AppleAuthView
 from .auth.google import GoogleAuthView
