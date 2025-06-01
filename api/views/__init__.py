@@ -1,23 +1,12 @@
-# Import all views from the main views.py file
-from .. import views
+# Exporter les vues spécifiques à Cloudinary depuis leurs modules respectifs
+from .cloudinary_views import CloudinaryUploadView
+from .cloudinary_admin_views import CloudinarySetupView
+from .cloudinary_config_view import CloudinaryConfigView
 
-# Re-export all views
-from ..views import (
-    login_view, register_view, register_annonceur_view,
-    profile_view, CategorieList, AnnonceList, AnnonceDetail,
-    create_payment, payment_history, CinetPayWebhookView,
-    check_email, mes_annonces, mes_tickets, mes_chills,
-    NotificationViewSet, upload_annonce_photo, received_bookings,
-    sold_tickets, delete_account_view, FacebookDataDeletionView,
-    UploadAnnonceVideoView
-)
-
+# Pour toutes les autres vues, nous allons simplement définir les noms sans les importer
+# Ces noms seront résolus lors de l'importation depuis urls.py directement vers views.py
 __all__ = [
-    'login_view', 'register_view', 'register_annonceur_view',
-    'profile_view', 'CategorieList', 'AnnonceList', 'AnnonceDetail',
-    'create_payment', 'payment_history', 'CinetPayWebhookView',
-    'check_email', 'mes_annonces', 'mes_tickets', 'mes_chills',
-    'NotificationViewSet', 'upload_annonce_photo', 'received_bookings',
-    'sold_tickets', 'delete_account_view', 'FacebookDataDeletionView',
-    'UploadAnnonceVideoView'
+    'CloudinaryUploadView',
+    'CloudinarySetupView',
+    'CloudinaryConfigView'
 ]
