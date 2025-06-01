@@ -1,10 +1,14 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-# Utiliser le module views directement au lieu de passer par __init__.py
-from .views import CloudinaryUploadView, CloudinarySetupView, CloudinaryConfigView
-# Importer tout depuis views.py - solution pour éviter l'importation circulaire
-from api.views import (
+# Importer les modules Cloudinary spécifiques depuis leur emplacement exact
+from .views.cloudinary_views import CloudinaryUploadView
+from .views.cloudinary_admin_views import CloudinarySetupView
+from .views.cloudinary_config_view import CloudinaryConfigView
+
+# Importer les vues directement depuis le fichier views.py (éviter l'importation via views/...)
+# En utilisant un import absolu pour éviter la boucle d'importation
+from .views import (
     login_view, register_view, register_annonceur_view,
     profile_view, CategorieList, AnnonceList, AnnonceDetail,
     create_payment, payment_history, CinetPayWebhookView,

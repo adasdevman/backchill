@@ -1,12 +1,6 @@
-# Exporter les vues spécifiques à Cloudinary depuis leurs modules respectifs
+# Ce fichier ne doit pas importer de api.views pour éviter les importations circulaires
 from .cloudinary_views import CloudinaryUploadView
 from .cloudinary_admin_views import CloudinarySetupView
 from .cloudinary_config_view import CloudinaryConfigView
 
-# Pour toutes les autres vues, nous allons simplement définir les noms sans les importer
-# Ces noms seront résolus lors de l'importation depuis urls.py directement vers views.py
-__all__ = [
-    'CloudinaryUploadView',
-    'CloudinarySetupView',
-    'CloudinaryConfigView'
-]
+# Ne pas définir __all__ pour éviter d'interférer avec les importations
