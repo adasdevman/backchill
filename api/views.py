@@ -693,9 +693,9 @@ class UploadAnnonceVideoView(APIView):
         logger.info(f"Fichier vidéo reçu: {video_file.name}, taille: {video_file.size}, type: {video_file.content_type}")
         
         # Validation de la taille du fichier
-        if video_file.size > 50 * 1024 * 1024: # 50MB limit
+        if video_file.size > 100 * 1024 * 1024: # 100MB limit pour Cloudinary
             logger.warning(f"Taille du fichier trop grande: {video_file.size} bytes")
-            return Response({'error': 'La taille de la vidéo ne doit pas dépasser 50MB.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'La taille de la vidéo ne doit pas dépasser 100MB.'}, status=status.HTTP_400_BAD_REQUEST)
         
         # Validation du type de fichier
         if not video_file.content_type.startswith('video/'):
@@ -705,20 +705,45 @@ class UploadAnnonceVideoView(APIView):
         try:
             # Vérification de la configuration Cloudinary
             from django.conf import settings
+            import cloudinary
+            import cloudinary.uploader
+            import cloudinary.api
+            
             logger.info(f"Configuration Cloudinary: CLOUD_NAME={settings.CLOUDINARY_STORAGE.get('CLOUD_NAME')}")
             logger.info(f"DEFAULT_FILE_STORAGE={settings.DEFAULT_FILE_STORAGE}")
             
-            # Création de l'entrée dans la galerie vidéo (téléchargement sur Cloudinary automatique)
-            logger.info(f"Début du téléchargement de la vidéo {video_file.name} vers Cloudinary")
-            galerie_video = GalerieVideo.objects.create(annonce=annonce, video=video_file)
-            logger.info(f"Vidéo téléchargée avec succès vers Cloudinary pour l'annonce {pk}, ID: {galerie_video.id}")
+            # Option 1: Télécharger via l'API Cloudinary directement
+            upload_result = cloudinary.uploader.upload(
+                video_file, 
+                resource_type="video",
+                upload_preset="ml_default",  # Utiliser votre preset existant
+                folder="annonces/videos",
+                use_filename=True,
+                unique_filename=True
+            )
+            logger.info(f"Vidéo téléchargée avec succès vers Cloudinary: {upload_result.get('secure_url')}")
             
-            # Récupération de l'URL Cloudinary
-            video_url = galerie_video.video.url
-            logger.info(f"URL Cloudinary de la vidéo: {video_url}")
+            # Création de l'entrée dans la galerie vidéo en lui passant l'URL Cloudinary
+            galerie_video = GalerieVideo.objects.create(
+                annonce=annonce,
+                video=video_file
+            )
+            logger.info(f"Entrée créée dans la galerie vidéo: ID={galerie_video.id}")
             
+            # Vérifier l'URL obtenue
+            if galerie_video.video and hasattr(galerie_video.video, 'url'):
+                video_url = galerie_video.video.url
+                logger.info(f"URL Cloudinary de la vidéo: {video_url}")
+            else:
+                logger.warning("L'URL de la vidéo n'est pas disponible")
+                video_url = upload_result.get('secure_url')  # Utiliser l'URL directement obtenue de Cloudinary
+                
             serializer = GalerieVideoSerializer(galerie_video)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({
+                **serializer.data, 
+                'cloudinary_url': upload_result.get('secure_url'),
+                'public_id': upload_result.get('public_id')
+            }, status=status.HTTP_201_CREATED)
             
         except OSError as e:
             logger.error(f"Erreur d'accès au système de fichiers: {str(e)}", exc_info=True)
