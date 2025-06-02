@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import CloudinaryUploadView
 
 urlpatterns = [
     path('auth/login/', views.LoginView.as_view(), name='login'),
@@ -13,4 +14,6 @@ urlpatterns = [
     path('api/auth/social/', views.social_login, name='social_login'),
     path('api/sync-clerk-user/', views.sync_clerk_user, name='sync_clerk_user'),
     path('api/check-clerk-config/', views.check_clerk_config, name='check_clerk_config'),
-] 
+    # Route for Cloudinary uploads
+    path('cloudinary/upload/', CloudinaryUploadView.as_view(), name='cloudinary_upload'),
+]

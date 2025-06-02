@@ -114,7 +114,7 @@ class Tarif(models.Model):
 
 class GaleriePhoto(models.Model):
     annonce = models.ForeignKey(Annonce, related_name='photos', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='annonces/photos/')
+    image = models.ImageField(upload_to='annonces/photos/', max_length=500)  # Increased to 500 for Cloudinary URLs
     created = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -136,7 +136,7 @@ class GaleriePhoto(models.Model):
 
 class GalerieVideo(models.Model):
     annonce = models.ForeignKey(Annonce, related_name='videos', on_delete=models.CASCADE)
-    video = models.FileField(upload_to='annonces/videos/')
+    video = models.FileField(upload_to='annonces/videos/', max_length=500)  # Increased to 500 for Cloudinary URLs
     created = models.DateTimeField(default=timezone.now)
 
     class Meta:
