@@ -9,6 +9,7 @@ from .views import (
     sold_tickets, delete_account_view, FacebookDataDeletionView,
     UploadAnnonceVideoView
 )
+from users.views import CloudinaryUploadView # Added import
 from rest_framework_simplejwt.views import TokenRefreshView
 from .auth.apple import AppleAuthView
 from .auth.google import GoogleAuthView
@@ -44,6 +45,7 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/apple', AppleAuthView.as_view(), name='apple_auth'),
     path('auth/google', GoogleAuthView.as_view(), name='google_auth'),
+    path('cloudinary/upload/', CloudinaryUploadView.as_view(), name='cloudinary_upload'), # Added Cloudinary upload path
 ]
 
 # okThen extend the urlpatterns with the router URLs
